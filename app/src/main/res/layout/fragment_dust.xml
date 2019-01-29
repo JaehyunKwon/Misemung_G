@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/ll_main"
+            android:layout_width="match_parent"
+            android:layout_height="504dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rectangle_best">
+
+            <TextView
+                android:id="@+id/main_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22.7dp"
+                android:layout_marginBottom="7.3dp"
+                android:textSize="26sp"
+                android:textColor="#ffffff"
+                android:gravity="center_horizontal"
+                android:drawableLeft="@drawable/group_2"
+                android:drawablePadding="10dp"
+                android:text=""
+                />
+
+            <TextView
+                android:id="@+id/main_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="33.3dp"
+                android:textSize="60.2sp"
+                android:textColor="#ffffff"
+                android:gravity="center_horizontal"
+                android:text="제일 좋음"
+                />
+
+            <ImageView
+                android:id="@+id/main_img"
+                android:layout_width="286dp"
+                android:layout_height="172.7dp"
+                android:background="@drawable/invalid_name"/>
+
+            <TextView
+                android:id="@+id/main_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32.3dp"
+                android:textSize="20sp"
+                android:textColor="#ffffff"
+                android:gravity="center"
+                android:text=""
+                />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_recyclerView"
+            android:layout_below="@+id/ll_main"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+    </RelativeLayout>
+
+</ScrollView>

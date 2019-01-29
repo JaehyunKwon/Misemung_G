@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="kr.common.find_micro_dust.MainActivity" >
+
+    <EditText
+        android:id="@+id/where"
+        android:layout_width="match_parent"
+        android:layout_height="40.7dp"
+        android:layout_marginLeft="11.7dp"
+        android:layout_marginRight="11.7dp"
+        android:layout_marginTop="26.7dp"
+        android:hint="새로운 위치검색"
+        android:drawableLeft="@drawable/group_10"
+        android:drawablePadding="10dp"
+        android:paddingLeft="10dp"
+        android:background="@drawable/rectangle_7"/>
+
+    <Button
+        android:id="@+id/this_place"
+        android:layout_width="100.3dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="13.3dp"
+        android:layout_marginLeft="21.3dp"
+        android:layout_marginRight="5.3dp"
+        android:layout_below="@+id/where"
+        android:background="@drawable/rectangle_2_copy"/>
+
+    <Button
+        android:id="@+id/this_detail_place"
+        android:layout_width="81.7dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="13.3dp"
+        android:layout_below="@+id/where"
+        android:layout_toRightOf="@+id/this_place"
+        android:background="@drawable/rectangle_2_1_copy"
+        android:visibility="gone"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16.7dp"
+        android:layout_below="@+id/this_place"/>
+
+</RelativeLayout>
