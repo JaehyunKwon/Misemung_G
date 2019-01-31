@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimaryDark">#212121</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorPopupDim">#4B000000</color> <!-- 75% 투명 -->
+
+    <color name="color_progress_bgcolor">#D8D8D8</color>
+
+    <color name="color_best_text">#2588e1</color>
+    <color name="color_nomal_text">#77b429</color>
+    <color name="color_bad_text">#bf6228</color>
+    <color name="color_worst_text">#b43c25</color>
+</resources>

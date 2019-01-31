@@ -1,4 +1,4 @@
-package kr.com.misemung;
+package kr.com.misemung.ui;
 
 
 import android.Manifest;
@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,15 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
+import kr.com.misemung.R;
+import kr.com.misemung.network.GetFindDustThread;
+import kr.com.misemung.network.GetSearchCityListThread;
+import kr.com.misemung.network.GetStationListThread;
+import kr.com.misemung.network.GetTransCoordTask;
+import kr.com.misemung.ui.adapter.DustPagerAdapter;
+import kr.com.misemung.ui.adapter.SearchAdapter;
 import kr.com.misemung.vo.AirInfo;
+import kr.com.misemung.vo.CityInfo;
 
 /**
  * MainActivity
@@ -55,7 +64,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private ArrayList<Fragment> fragment_list = new ArrayList<>();
 	private ViewPager viewPager;
 
+	private SearchAdapter searchAdapter;
+
 	private EditText where;
+	private ListView searchListView;
 	private Button this_place;
 	private Button this_detail_place;
 	private String stationName = "";
@@ -97,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		viewPager = findViewById(R.id.viewpager);
 		where = findViewById(R.id.where);
+        searchListView = findViewById(R.id.searchListView);
 		this_place = findViewById(R.id.this_place);
 		this_detail_place = findViewById(R.id.this_detail_place);
 
@@ -108,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
 					String stationName;
 					stationName = where.getText().toString();
-					getFindDust(stationName);
+                    getSearchCityDust(stationName);
 					return true;
 				}
 				return false;
@@ -126,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	}
 
-
+	/**
+	 * 대기정보 API 조회
+	 * */
 	public void getFindDust(String name) {    //대기정보를 가져오는 스레드
 
 		stationName = name;
@@ -136,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	}
 
+	/**
+	 * 대기정보 API 조회 결과
+	 * */
 	public void FindDustThreadResponse(AirInfo airInfo) {    //대기정보 가져온 결과값
 		stationCnt = 0;    //측정개수정보(여기선 1개만 가져온다
 		stationCnt = Integer.parseInt(airInfo.getTotalCount());
@@ -148,6 +166,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
+	}
+
+	/**
+	 * 검색된 도시 API 조회
+	 * */
+	public void getSearchCityDust(String name) {    //대기정보를 가져오는 스레드
+
+		stationName = name;
+		GetSearchCityListThread.active = true;
+		GetSearchCityListThread getstationthread = new GetSearchCityListThread(false, stationName);        //스레드생성(UI 스레드사용시 system 뻗는다)
+		getstationthread.start();    //스레드 시작
+
+	}
+
+	/**
+	 * 검색된 도시 API 조회 결과
+	 * */
+	public void SearchCityThreadResponse(ArrayList<CityInfo> cityInfos) {    //측정소 정보를 가져온 결과
+		searchListView.setVisibility(View.VISIBLE);
+
+		searchAdapter = new SearchAdapter(this, cityInfos);
+		searchListView.setAdapter(searchAdapter);
+
+		GetSearchCityListThread.active = false;
+		GetSearchCityListThread.interrupted();
 	}
 
 	public void getStationList(String name) {    //이건 측정소 정보가져올 스레드
@@ -166,26 +209,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
 
-
 	}
 
-	public static void getNearStation(String yGrid, String xGrid) {    //이건 측정소 정보가져올 스레드
+	/**
+	 * 가까운 측정소 API 조회
+	 * */
+	public static void getNearStation(String xGrid, String yGrid) {    //이건 측정소 정보가져올 스레드
 
 		GetStationListThread.active = true;
-		GetStationListThread getstationthread = new GetStationListThread(false, yGrid, xGrid);        //스레드생성(UI 스레드사용시 system 뻗는다)
+		GetStationListThread getstationthread = new GetStationListThread(false, xGrid, yGrid);        //스레드생성(UI 스레드사용시 system 뻗는다)
 		getstationthread.start();    //스레드 시작
 
 	}
 
+	/**
+	 * 가까운 측정소 API 조회 결과
+	 * */
 	public void NearStationThreadResponse(String[] sStation, String[] sAddr, String[] sTm) {    //측정소 정보를 가져온 결과
-		where.setText(sStation[0]);
+		//where.setText(sStation[0]);
 		this_detail_place.setVisibility(View.VISIBLE);
 		this_detail_place.setText(sStation[0]);
-		GetFindDustThread.active = false;
-		GetFindDustThread.interrupted();
+
+		searchListView.setVisibility(View.GONE);
+
+		getFindDust(sStation[0]);
+		//GetFindDustThread.active = false;
+		//GetFindDustThread.interrupted();
 	}
 
-	void getStation(String yGrid, String xGrid) {
+	/**
+	 * GPS 위치 받은 값으로 조회
+	 * */
+	public void getStation(String xGrid, String yGrid) {
 
 		if (xGrid != null && yGrid != null) {
 			GetTransCoordTask.active = true;
@@ -204,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		if (x.equals("NaN") || y.equals("NaN")) {
 		} else {
 			//totalcnt.append("\r\n변환된 좌표값은 " + x + "," + y + "입니다.");
-			getNearStation(y, x);
+			getNearStation(x, y);
 		}
 		GetTransCoordTask.active = false;
 	}

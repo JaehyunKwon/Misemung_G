@@ -1,4 +1,4 @@
-package kr.com.misemung;
+package kr.com.misemung.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

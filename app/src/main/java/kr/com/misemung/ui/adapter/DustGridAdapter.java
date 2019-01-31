@@ -1,5 +1,6 @@
-package kr.com.misemung;
+package kr.com.misemung.ui.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,19 +11,25 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kr.com.misemung.R;
 import kr.com.misemung.vo.ListInfo;
 
 public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemViewHolder> {
 
+    private Context context;
     // adapter에 들어갈 list 입니다.
     private ArrayList<ListInfo> listData = new ArrayList<>();
+
+    public DustGridAdapter(Context context) {
+        this.context = context;
+    }
 
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // LayoutInflater를 이용하여 전 단계에서 만들었던 item.xml을 inflate 시킵니다.
         // return 인자는 ViewHolder 입니다.
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_grid_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dust_grid_view, parent, false);
         return new ItemViewHolder(view);
     }
 
@@ -38,7 +45,7 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
         return listData.size();
     }
 
-    void addItem(ListInfo data) {
+    public void addItem(ListInfo data) {
         // 외부에서 item을 추가시킬 함수입니다.
         listData.add(data);
     }
@@ -64,11 +71,37 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
         void onBind(ListInfo data) {
             item_title.setText(data.getTitle());
             item_level.setText(data.getLevel());
+            item_level.setTextColor(context.getResources().getColor(transGradeBgColor(data.getLevel())));
             item_value.setText(data.getValue());
 
-            String[] pro_val = data.getValue().split(" ");
-            double int_val = Float.parseFloat(pro_val[0]);
-            item_progress.setProgress((int)int_val);
+            if (!data.getValue().contains("-")) {
+                String[] pro_val = data.getValue().split(" ");
+                double int_val = Float.parseFloat(pro_val[0]);
+                item_progress.setProgress((int) int_val);
+            }
+        }
+
+        public int transGradeBgColor(String strGrade) {
+            int trans;
+            switch (strGrade) {
+                case "좋음":
+                    trans = R.color.color_best_text;
+                    break;
+                case "보통":
+                    trans = R.color.color_nomal_text;
+                    break;
+                case "나쁨":
+                    trans = R.color.color_bad_text;
+                    break;
+                case "매우나쁨":
+                    trans = R.color.color_worst_text;
+                    break;
+                default:
+                    trans = R.color.color_nomal_text;
+                    break;
+
+            }
+            return trans;
         }
     }
 

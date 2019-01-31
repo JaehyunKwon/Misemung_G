@@ -1,4 +1,4 @@
-package kr.com.misemung;
+package kr.com.misemung.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import kr.com.misemung.R;
+import kr.com.misemung.ui.adapter.DustGridAdapter;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
 
@@ -55,7 +57,7 @@ public class DustFragment extends Fragment {
         list_recyclerView.setLayoutManager(gridLayoutManager);
 
         // 리스트 item Adapter
-        adapter = new DustGridAdapter();
+        adapter = new DustGridAdapter(getContext());
 
         // 메인 레벨
         main_level.setText(transGrade(airInfo.getPm25grade1h()));
@@ -93,6 +95,7 @@ public class DustFragment extends Fragment {
                 trans = "매우나쁨";
                 break;
             default:
+                trans = "정보없음";
                 break;
 
         }

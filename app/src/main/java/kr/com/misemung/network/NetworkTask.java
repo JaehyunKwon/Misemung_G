@@ -128,18 +128,7 @@ public class NetworkTask extends AsyncTask<String, String, Response> {
 
     @Override
     protected Response doInBackground(String... strings) {
-        /*if (!NetworkConnections.isConnected() || !NetworkConnections.isOnline()) {
-            if(req.getApi().equals(API.Library.ChkDownload)){
-                Response response = new Response();
-                response.setResultCode("9001");
-                response.setResultMsg(context.getString(R.string.viewer_network_connection_error2));
-                return response;
-            }
-
-            return null;
-        } else {*/
-            return doRequest(context, req);
-        //}
+        return doRequest(context, req);
     }
 
     @Override
@@ -179,51 +168,16 @@ public class NetworkTask extends AsyncTask<String, String, Response> {
             Log.e("NETWORKTASK", "request URL=" + url);
 
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            /*if (req.getApi() == API.Library.MYROOM) {
-                httpURLConnection.setConnectTimeout(connect_timeout);
-                httpURLConnection.setReadTimeout(60000 * 5);
-            } else {*/
-                httpURLConnection.setConnectTimeout(connect_timeout);
-                httpURLConnection.setReadTimeout(read_timeout);
-            //}
+            httpURLConnection.setConnectTimeout(connect_timeout);
+            httpURLConnection.setReadTimeout(read_timeout);
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setUseCaches(false);
             httpURLConnection.setDoInput(true);
 
             // 헤더 설정
-            httpURLConnection.setRequestProperty("Content-Type",        "application/json; charset=UTF-8");
-            httpURLConnection.setRequestProperty("Authorization",        "KakaoAK 9c9c3f7111b8e728d440bbebe4451e75");
+            httpURLConnection.setRequestProperty("Content-Type",    "application/json; charset=UTF-8");
+            httpURLConnection.setRequestProperty("Authorization",   "KakaoAK 9c9c3f7111b8e728d440bbebe4451e75");
             // 헤더 설정
-
-            /*if (api.getMethod().equals(API.POST) || api.getMethod().equals(API.PUT) || api.getMethod().equals(API.DELETE)) {
-                JSONObject obj = new JSONObject();
-
-                Map<String, Object> params = req.getParams();
-                if (params.size() > 0) {
-                    for (String key : params.keySet()) {
-                        Object data = params.get(key);
-                        Log.d("NetworkTask", "body key : " + key + ", value : " + data.toString());
-                        if (data instanceof String) {
-                            obj.put(key, params.get(key));
-                        } else {
-                            JSONArray jsonArray = makeListData(data);
-
-                            obj.put(key, jsonArray);
-                        }
-                    }
-
-                    OutputStreamWriter osw = new OutputStreamWriter(httpURLConnection.getOutputStream(), "UTF-8");
-                    osw.write(obj.toString());
-                    osw.flush();
-                } else {
-                    if (!req.getJsonString().equals("")) {
-                        Log.d("NetworkTask", "body Json : " + req.getJsonString());
-                        OutputStreamWriter osw = new OutputStreamWriter(httpURLConnection.getOutputStream(), "UTF-8");
-                        osw.write(req.getJsonString());
-                        osw.flush();
-                    }
-                }
-            }*/
 
             httpURLConnection.connect();
 
@@ -298,25 +252,6 @@ public class NetworkTask extends AsyncTask<String, String, Response> {
 
         return response;
     }
-
-    private JSONArray makeListData(Object data) throws IllegalAccessException, JSONException {
-        JSONArray jsonArray = new JSONArray();
-
-
-        for(Object listData : (List<Object>) data){
-            Field field[] = listData.getClass().getDeclaredFields();
-            JSONObject jsonObject = new JSONObject();
-            for(Field fieldData1 : field){
-                if(fieldData1.getType().equals(String.class)){
-                    fieldData1.setAccessible(true);
-                    jsonObject.put(fieldData1.getName(), fieldData1.get(listData));
-                }
-            }
-            jsonArray.put(jsonObject);
-        }
-        return jsonArray;
-    }
-
 
     private String readStream(InputStream stream) throws IOException {
         StringBuilder sb = new StringBuilder();

@@ -3,7 +3,7 @@ package kr.com.misemung.vo;
 import java.io.Serializable;
 
 /**
- * Created by soohoon.kang on 2017-04-03.
+ * Created by kjh on 2019-01-21.
  */
 
 public class AirInfo implements Serializable {

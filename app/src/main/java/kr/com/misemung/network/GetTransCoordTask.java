@@ -1,4 +1,4 @@
-package kr.com.misemung;
+package kr.com.misemung.network;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,10 +7,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import kr.com.misemung.network.NetworkTask;
-import kr.com.misemung.network.OnHttpResponseListener;
-import kr.com.misemung.network.Request;
-import kr.com.misemung.network.Response;
+import kr.com.misemung.ui.MainActivity;
 import kr.com.misemung.vo.GeoInfo;
 
 /**

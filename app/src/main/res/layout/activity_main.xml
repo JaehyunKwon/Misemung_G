@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="kr.common.find_micro_dust.MainActivity" >
+    tools:context=".ui.MainActivity" >
 
     <EditText
         android:id="@+id/where"
@@ -19,6 +19,14 @@
         android:drawablePadding="10dp"
         android:paddingLeft="10dp"
         android:background="@drawable/rectangle_7"/>
+    <ListView
+        android:id="@+id/searchListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#999999"
+        android:dividerHeight="1dp"
+        android:layout_below="@+id/where"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/this_place"

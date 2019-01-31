@@ -1,4 +1,4 @@
-package kr.com.misemung;
+package kr.com.misemung.network;
 
 import android.os.Handler;
 import android.util.Log;
@@ -10,58 +10,57 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import kr.com.misemung.ui.MainActivity;
+
 /**
  * 대기정보를 가져오는 스레드
  *
  * @author kjh
  *
  */
-class GetStationListThread extends Thread {	//기상청 연결을 위한 스레드
-	static public boolean active=false;
+public class GetStationListThread extends Thread {	//기상청 연결을 위한 스레드
+	public static boolean active = false;
 	//파서용 변수
-	int data=0;			//이건 파싱해서 array로 넣을때 번지
+	private int data = 0;			//이건 파싱해서 array로 넣을때 번지
 	public boolean isreceiver;
-	String sTotalCount;	//결과수
-	String[] sStationName,sAddr,sTm;	//측정소 이름
+	private String sTotalCount;	//결과수
+	private String[] sStationName,sAddr,sTm;	//측정소 이름
 
-	boolean bStationName,bTotalCount,bAddr,bTm;	//여긴 저장을 위한 플래그들
-	boolean tResponse;	//이건 text로 뿌리기위한 플래그
+	private boolean bStationName,bTotalCount,bAddr,bTm;	//여긴 저장을 위한 플래그들
+	private boolean tResponse;	//이건 text로 뿌리기위한 플래그
 
-	Handler handler;	//날씨저장 핸들러
-	String stationUrl;
-	String Servicekey="ServiceKey=M3v8WQCkR8IrE65Qb2iaOz0Ns3j%2FCnzlOteV7ch%2BbHpRfJEpbE96MuO%2Bqf2VoHLk2x1iS8hFv%2BUwO%2B39BbukBg%3D%3D";
-	String getInfo="http://openapi.airkorea.or.kr/openapi/services/rest/MsrstnInfoInqireSvc/";
-	String getStationFindDust="getMsrstnList?";
-	String getNearStationFindDust="getNearbyMsrstnList?";
-	String addr="addr=";
-	String infoCnt="numOfRows=200";
-	String xGrid="tmX=",yGrid="tmY=";
-	int getAPI=0;
+	private Handler handler;	//날씨저장 핸들러
+	private String stationUrl;
+	private String addr="addr=";
+	private String infoCnt="numOfRows=200";
+	private String xGrid="tmX=",yGrid="tmY=";
+	private int getAPI = 0;
 
 	public GetStationListThread(boolean receiver, String sido){
 
 		Log.w("스레드가 시이름", sido);
-		handler=new Handler();
-		isreceiver=receiver;
+		handler = new Handler();
+		isreceiver = receiver;
 		try{
 			addr+=URLEncoder.encode(sido, "utf-8");
-		}catch(Exception e){
-
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
+			Log.e("GetStationListThread", "GetStationListThread_Exception ==> " + ignored);
 		}
 
-		getAPI=1;	//사용할 API 구분용
-		stationUrl=getInfo+getStationFindDust+addr+"&"+infoCnt+"&"+Servicekey;
+		getAPI = 1;	//사용할 API 구분용
+		stationUrl = API.REQUEST_FIND_SIDO()+"?"+addr+"&"+infoCnt+"&ServiceKey="+API.SERVICE_KEY;
 
 	}
-	public GetStationListThread(boolean receiver, String gridY,String gridX){
+	public GetStationListThread(boolean receiver, String gridX,String gridY){
 
 		Log.w("받은 TM좌표", gridY+","+gridX);
-		handler=new Handler();
-		isreceiver=receiver;
+		handler = new Handler();
+		isreceiver = receiver;
 		xGrid+=gridX;
 		yGrid+=gridY;
-		getAPI=2;	//사용할 API 구분용
-		stationUrl=getInfo+getNearStationFindDust+xGrid+"&"+yGrid+"&"+infoCnt+"&"+Servicekey;
+		getAPI = 2;	//사용할 API 구분용
+		stationUrl = API.REQUEST_FIND_NEARBY()+"?"+xGrid+"&"+yGrid+"&"+infoCnt+"&ServiceKey="+API.SERVICE_KEY;
 
 	}
 	public void run(){
@@ -73,16 +72,18 @@ class GetStationListThread extends Thread {	//기상청 연결을 위한 스레�
 				sAddr=new String[100];	//주소
 				sTm=new String[100];	//거리
 				data=0;
-				XmlPullParserFactory factory= XmlPullParserFactory.newInstance();	//이곳이 풀파서를 사용하게 하는곳
-				factory.setNamespaceAware(true);									//이름에 공백도 인식
-				XmlPullParser xpp=factory.newPullParser();							//풀파서 xpp라는 객체 생성
-				//String dustUrl=getInfo+getStationFindDust+addr+sidoName+"&"+infoCnt+"&"+Servicekey;
-				Log.w("스레드가 받은 ", stationUrl);
+
 				URL url=new URL(stationUrl);		//URL객체생성
-				InputStream is=url.openStream();	//연결할 url을 inputstream에 넣어 연결을 하게된다.
+				Log.w("스레드가 받은 ", stationUrl);
+				InputStream is = url.openStream();	//연결할 url을 inputstream에 넣어 연결을 하게된다.
+
+				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();	//이곳이 풀파서를 사용하게 하는곳
+				factory.setNamespaceAware(true);									//이름에 공백도 인식
+				XmlPullParser xpp = factory.newPullParser();						//풀파서 xpp라는 객체 생성
+
 				xpp.setInput(is,"UTF-8");			//이렇게 하면 연결이 된다. 포맷형식은 utf-8로
 
-				int eventType=xpp.getEventType();	//풀파서에서 태그정보를 가져온다.
+				int eventType = xpp.getEventType();	//풀파서에서 태그정보를 가져온다.
 
 				while(eventType!= XmlPullParser.END_DOCUMENT){	//문서의 끝이 아닐때
 
@@ -92,12 +93,12 @@ class GetStationListThread extends Thread {	//기상청 연결을 위한 스레�
 							if(xpp.getName().equals("stationName")){	//측정소
 								bStationName=true;
 							}if(xpp.getName().equals("addr")){	//주소
-							bAddr=true;
-						}if(xpp.getName().equals("tm")){	//거리
-							bTm=true;
-						}if(xpp.getName().equals("totalCount")){	//측정소 수
-							bTotalCount=true;
-						}
+								bAddr=true;
+							}if(xpp.getName().equals("tm")){	//거리
+								bTm=true;
+							}if(xpp.getName().equals("totalCount")){	//측정소 수
+								bTotalCount=true;
+							}
 
 							break;
 
@@ -108,15 +109,15 @@ class GetStationListThread extends Thread {	//기상청 연결을 위한 스레�
 								sStationName[data]=xpp.getText();
 								bStationName=false;
 							}if(bAddr){
-							sAddr[data]=xpp.getText();
-							bAddr=false;
-						}if(bTm){
-							sTm[data]=xpp.getText();
-							bTm=false;
-						}if(bTotalCount){
-							sTotalCount=xpp.getText();
-							bTotalCount=false;
-						}
+								sAddr[data]=xpp.getText();
+								bAddr=false;
+							}if(bTm){
+								sTm[data]=xpp.getText();
+								bTm=false;
+							}if(bTotalCount){
+								sTotalCount=xpp.getText();
+								bTotalCount=false;
+							}
 							break;
 
 						case XmlPullParser.END_TAG:		//'</' 엔드태그를 만나면 (이부분이 중요)
@@ -125,10 +126,10 @@ class GetStationListThread extends Thread {	//기상청 연결을 위한 스레�
 								tResponse=true;						//따라서 이때 모든 정보를 화면에 뿌려주면 된다.
 								view_text();					//뿌려주는 곳~
 							}if(xpp.getName().equals("dmY")){	//측정소 리스트의 경우 item태그가 2개이므로
-							data++;							//dmY로 구분
-						}if(xpp.getName().equals("tm")){	//가까운 측정소 구분은 tm으로 구분
-							data++;
-						}
+								data++;							//dmY로 구분
+							}if(xpp.getName().equals("tm")){	//가까운 측정소 구분은 tm으로 구분
+								data++;
+							}
 							break;
 					}
 					eventType=xpp.next();	//이건 다음 이벤트로~
@@ -138,6 +139,7 @@ class GetStationListThread extends Thread {	//기상청 연결을 위한 스레�
 
 			}catch(Exception e){
 				e.printStackTrace();
+				Log.e("GetStationListThread", "run_Exception ==> " + e);
 			}
 		}
 
