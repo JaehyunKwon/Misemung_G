@@ -26,6 +26,7 @@ public class DustFragment extends Fragment {
     private TextView main_level;
     private TextView main_desc;
     private ImageView main_img;
+    private ImageView position_bottom;
 
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
@@ -40,13 +41,14 @@ public class DustFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_dust, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_dust, container, false);
 
         ll_main = rootView.findViewById(R.id.ll_main);
         main_place = rootView.findViewById(R.id.main_place);
         main_level = rootView.findViewById(R.id.main_level);
         main_desc = rootView.findViewById(R.id.main_desc);
         main_img = rootView.findViewById(R.id.main_img);
+        position_bottom = rootView.findViewById(R.id.position_bottom);
         list_recyclerView = rootView.findViewById(R.id.list_recyclerView);
 
         // 리사이클 뷰 그리드뷰 형식으로 선언
@@ -64,7 +66,7 @@ public class DustFragment extends Fragment {
         main_place.setText(stationName);
 
         adapter.addItem(new ListInfo("미세먼지", transGrade(airInfo.getPm10grade1h()), airInfo.getPm10value()+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("초미세먼지", transGrade(airInfo.getPm25grade1h()), airInfo.getPm25value()+ " ㎍/m³"));
+        adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airInfo.getPm25grade1h()), airInfo.getPm25value()+ " ㎍/m³"));
         adapter.addItem(new ListInfo("아황산가스", transGrade(airInfo.getSo2grade()), airInfo.getSo2value()+ " ppm"));
         adapter.addItem(new ListInfo("일산화탄소", transGrade(airInfo.getCograde()), airInfo.getCovalue()+ " ppm"));
         adapter.addItem(new ListInfo("오존", transGrade(airInfo.getO3grade()), airInfo.getO3value()+ " ppm"));
@@ -72,21 +74,63 @@ public class DustFragment extends Fragment {
 
         list_recyclerView.setAdapter(adapter);
 
+        // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
+        position_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rootView.scrollTo(0, main_img.getHeight());
+            }
+        });
+
         return rootView;
     }
 
-    public String transGrade(String intGrade) {
-        String trans = null;
+    public String transMicroDustGrade(String intGrade) {
+        String mdTrans;
         switch (intGrade) {
             case "1":
-                trans = "좋음";
+                mdTrans = "좋음";
                 ll_main.setBackgroundResource(R.drawable.rectangle_best);
+                main_img.setImageResource(R.drawable.main_best);
                 main_desc.setText(R.string.best_desc);
                 break;
             case "2":
+                mdTrans = "보통";
+                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
+                main_img.setBackgroundResource(R.drawable.main_normal);
+                main_desc.setText(R.string.normal_desc);
+                break;
+            case "3":
+                mdTrans = "나쁨";
+                ll_main.setBackgroundResource(R.drawable.rectangle_bad);
+                main_img.setBackgroundResource(R.drawable.main_bad);
+                main_desc.setText(R.string.bad_desc);
+                break;
+            case "4":
+                mdTrans = "매우나쁨";
+                ll_main.setBackgroundResource(R.drawable.rectangle_worst);
+                main_img.setBackgroundResource(R.drawable.main_worst);
+                main_desc.setText(R.string.worst_desc);
+                break;
+            default:
+                mdTrans = "정보없음";
+                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
+                main_img.setBackgroundResource(R.drawable.main_normal);
+                main_desc.setText(R.string.default_desc);
+                break;
+
+        }
+        return mdTrans;
+    }
+
+    public String transGrade(String intGrade) {
+        String trans;
+        switch (intGrade) {
+            case "1":
+                trans = "좋음";
+                break;
+            case "2":
                 trans = "보통";
-                ll_main.setBackgroundResource(R.drawable.rectangle_good);
-                main_desc.setText(R.string.good_desc);
                 break;
             case "3":
                 trans = "나쁨";

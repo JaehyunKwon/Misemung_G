@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.MainActivity" >
+    tools:context=".ui.MainActivity">
 
     <EditText
         android:id="@+id/where"
@@ -28,6 +29,18 @@
         android:layout_below="@+id/where"
         android:visibility="gone"/>
 
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchListView"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:visibility="gone"
+        app:tabIndicatorColor="#ffffff"
+        app:tabGravity="center"
+        app:tabMode="scrollable"/>
+
     <Button
         android:id="@+id/this_place"
         android:layout_width="100.3dp"
@@ -35,7 +48,7 @@
         android:layout_marginTop="13.3dp"
         android:layout_marginLeft="21.3dp"
         android:layout_marginRight="5.3dp"
-        android:layout_below="@+id/where"
+        android:layout_below="@+id/tab_layout"
         android:background="@drawable/rectangle_2_copy"/>
 
     <Button
@@ -43,7 +56,7 @@
         android:layout_width="81.7dp"
         android:layout_height="34dp"
         android:layout_marginTop="13.3dp"
-        android:layout_below="@+id/where"
+        android:layout_below="@+id/tab_layout"
         android:layout_toRightOf="@+id/this_place"
         android:background="@drawable/rectangle_2_1_copy"
         android:visibility="gone"/>

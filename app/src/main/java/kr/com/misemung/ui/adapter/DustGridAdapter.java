@@ -88,7 +88,7 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
                     trans = R.color.color_best_text;
                     break;
                 case "보통":
-                    trans = R.color.color_nomal_text;
+                    trans = R.color.color_normal_text;
                     break;
                 case "나쁨":
                     trans = R.color.color_bad_text;
@@ -97,7 +97,7 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
                     trans = R.color.color_worst_text;
                     break;
                 default:
-                    trans = R.color.color_nomal_text;
+                    trans = R.color.color_normal_text;
                     break;
 
             }

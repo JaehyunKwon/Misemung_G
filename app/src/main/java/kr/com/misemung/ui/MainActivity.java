@@ -12,11 +12,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -41,6 +43,7 @@ import kr.com.misemung.network.GetStationListThread;
 import kr.com.misemung.network.GetTransCoordTask;
 import kr.com.misemung.ui.adapter.DustPagerAdapter;
 import kr.com.misemung.ui.adapter.SearchAdapter;
+import kr.com.misemung.util.BaseUtil;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.CityInfo;
 
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	GoogleApiClient mGoogleApiClient;
 	Location mLastLocation;
+
+	private TabLayout tabLayout;
 
 	private ArrayList<Fragment> fragment_list = new ArrayList<>();
 	private ViewPager viewPager;
@@ -107,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		mContext = this;    //static에서 context를 쓰기위해~
 
+		tabLayout = findViewById(R.id.tab_layout);
 		viewPager = findViewById(R.id.viewpager);
 		where = findViewById(R.id.where);
         searchListView = findViewById(R.id.searchListView);
@@ -119,9 +125,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-					String stationName;
-					stationName = where.getText().toString();
-                    getSearchCityDust(stationName);
+					BaseUtil.hideSoftKeyboard(where);
+					where.clearFocus();
+					// API 호출
+                    getSearchCityDust(where.getText().toString());
 					return true;
 				}
 				return false;
@@ -163,6 +170,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		fragment_list.add(new DustFragment(airInfo, stationName));
 		Log.w("MainActivity","fragment_list ==> "+fragment_list.size());
 		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+		tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				viewPager.setCurrentItem(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+
+			}
+		});
 
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
@@ -226,15 +251,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	 * 가까운 측정소 API 조회 결과
 	 * */
 	public void NearStationThreadResponse(String[] sStation, String[] sAddr, String[] sTm) {    //측정소 정보를 가져온 결과
-		//where.setText(sStation[0]);
 		this_detail_place.setVisibility(View.VISIBLE);
 		this_detail_place.setText(sStation[0]);
+
+		tabLayout.setVisibility(View.VISIBLE);
+		tabLayout.addTab(tabLayout.newTab().setCustomView(this_detail_place));
 
 		searchListView.setVisibility(View.GONE);
 
 		getFindDust(sStation[0]);
-		//GetFindDustThread.active = false;
-		//GetFindDustThread.interrupted();
 	}
 
 	/**
@@ -326,8 +351,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 		if (mLastLocation != null) {
-			Log.d("mLastLocation", String.valueOf(mLastLocation.getLatitude()) + "," + mLastLocation.getLongitude());
-			getStation(String.valueOf(mLastLocation.getLatitude()), String.valueOf(mLastLocation.getLongitude()));
+			Log.d("mLastLocation", String.valueOf(mLastLocation.getLongitude()) + "," + mLastLocation.getLatitude());
+			getStation(String.valueOf(mLastLocation.getLongitude()), String.valueOf(mLastLocation.getLatitude()));
 		} else {
 		}
 

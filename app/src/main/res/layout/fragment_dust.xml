@@ -46,8 +46,7 @@
             <ImageView
                 android:id="@+id/main_img"
                 android:layout_width="286dp"
-                android:layout_height="172.7dp"
-                android:background="@drawable/invalid_name"/>
+                android:layout_height="172.7dp"/>
 
             <TextView
                 android:id="@+id/main_desc"
@@ -59,6 +58,14 @@
                 android:gravity="center"
                 android:text=""
                 />
+
+            <ImageView
+                android:id="@+id/position_bottom"
+                android:layout_width="20dp"
+                android:layout_height="13.7dp"
+                android:layout_marginTop="15.8dp"
+                android:layout_marginBottom="28dp"
+                android:background="@drawable/position_bottom"/>
 
         </LinearLayout>
 
