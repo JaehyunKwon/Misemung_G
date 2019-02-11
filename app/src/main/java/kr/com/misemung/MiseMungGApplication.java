@@ -20,6 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import kr.com.misemung.realm.entity.AirRecord;
+
 
 /**
  * 미세멍지 application
@@ -50,6 +54,28 @@ public class MiseMungGApplication extends MultiDexApplication {
 		Log.i(TAG, "MiseMungGApplication Create");
 
 		mContext = getApplicationContext();
+
+		Realm.init(mContext);
+
+		try {
+			RealmConfiguration newConfig = new RealmConfiguration.Builder()
+					.name("misemung.realm")
+					.schemaVersion(1)
+					.deleteRealmIfMigrationNeeded()
+					.compactOnLaunch()
+					.build();
+			Realm.setDefaultConfiguration(newConfig);
+
+			Realm realm = Realm.getDefaultInstance();
+			RealmConfiguration config = realm.getConfiguration();
+
+			Log.e("MiseMungGApplication", "REALM path:" + config.getPath());
+			File realmFile = new File(config.getPath());
+			if (!realmFile.exists()) {
+				realm.createObject(AirRecord.class);
+			}
+
+		} catch (RuntimeException ignore) {}
 
 		//Thread.setDefaultUncaughtExceptionHandler(new EBookUncaughtExceptionHandler(getBaseContext(), getContentResolver(), Thread.getDefaultUncaughtExceptionHandler()));
 
