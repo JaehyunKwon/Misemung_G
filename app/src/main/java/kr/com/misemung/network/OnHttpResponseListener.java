@@ -5,5 +5,5 @@ package kr.com.misemung.network;
  */
 
 public interface OnHttpResponseListener {
-    public void onHttpResponse(Response response);
+    void onHttpResponse(Response response);
 }

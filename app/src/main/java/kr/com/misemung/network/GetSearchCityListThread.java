@@ -62,11 +62,11 @@ public class GetSearchCityListThread extends Thread {	//기상청 연결을 위�
 		if(active){
 			try{
 				bSidoName=bSggName=bUmdName=bTmX=bTmY=false;
-				sSidoName=new String[100];	//시도이름
-				sSggName=new String[100];	//시군구
-				sUmdName=new String[100];	//읍면동
-				sTmX=new String[100];	//x좌표
-				sTmY=new String[100];	//y좌표
+				sSidoName=new String[1000];	//시도이름
+				sSggName=new String[1000];	//시군구
+				sUmdName=new String[1000];	//읍면동
+				sTmX=new String[1000];	//x좌표
+				sTmY=new String[1000];	//y좌표
 				data=0;
 
 				URL url=new URL(stationUrl);		//URL객체생성
@@ -161,20 +161,17 @@ public class GetSearchCityListThread extends Thread {	//기상청 연결을 위�
 	 */
 	private void view_text(){
 
-		handler.post(new Runnable() {	//기본 핸들러니깐 handler.post하면됨
+		//기본 핸들러니깐 handler.post하면됨
+		handler.post(() -> {
 
-			@Override
-			public void run() {
-
-				active=false;
-				if(tResponse){		//문서를 다 읽었다
-					tResponse=false;
-					data=0;
-					((MainActivity)MainActivity.mContext).SearchCityThreadResponse(cityInfoList);
-				}
+            active=false;
+            if(tResponse){		//문서를 다 읽었다
+                tResponse=false;
+                data=0;
+                ((MainActivity)MainActivity.mContext).SearchCityThreadResponse(cityInfoList);
+            }
 
 
-			}
-		});
+        });
 	}
 }

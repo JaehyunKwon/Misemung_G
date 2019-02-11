@@ -10,8 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import io.realm.RealmResults;
 import kr.com.misemung.R;
-import kr.com.misemung.ui.MainActivity;
+import kr.com.misemung.realm.entity.AirRecord;
+import kr.com.misemung.realm.repository.AirRepository;
+import kr.com.misemung.realm.repository.CityRepository;
 import kr.com.misemung.vo.CityInfo;
 
 import static kr.com.misemung.ui.MainActivity.getNearStation;
@@ -62,12 +65,11 @@ public class SearchAdapter extends BaseAdapter {
         viewHolder.umdName.setText(filtered.get(position).getSidoName()+" "
                 + filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName());
 
-        viewHolder.umdName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 가까운 측정소 위치 조회
-                getNearStation(filtered.get(position).getTmX(), filtered.get(position).getTmY());
-            }
+        viewHolder.umdName.setOnClickListener(v -> {
+            CityRepository.City.set(filtered.get(position).getSidoName()+" "
+                    + filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName(), filtered.get(position));
+            // 가까운 측정소 위치 조회
+            getNearStation(filtered.get(position).getTmX(), filtered.get(position).getTmY());
         });
 
         return convertView;

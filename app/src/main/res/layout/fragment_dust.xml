@@ -45,8 +45,8 @@
 
             <ImageView
                 android:id="@+id/main_img"
-                android:layout_width="286dp"
-                android:layout_height="172.7dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/main_desc"

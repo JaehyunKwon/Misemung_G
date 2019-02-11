@@ -106,17 +106,14 @@ public class GetTransCoordTask {	// 스레드
 	 */
 	private void showtext(){
 
-		handler.post(new Runnable() {	//기본 핸들러니깐 handler.post하면됨
+        //기본 핸들러니깐 handler.post하면됨
+        handler.post(() -> {
 
-			@Override
-			public void run() {
+            active=false;
 
-				active=false;
+            MainActivity.TransCoordThreadResponse(getX, getY);
 
-				MainActivity.TransCoordThreadResponse(getX, getY);
-
-			}
-		});
+        });
 	}
 
 }

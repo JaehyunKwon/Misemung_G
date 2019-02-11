@@ -68,9 +68,9 @@ public class GetStationListThread extends Thread {	//기상청 연결을 위한 
 		if(active){
 			try{
 				bStationName=bAddr=bTm=false;
-				sStationName=new String[100];	//측정소
-				sAddr=new String[100];	//주소
-				sTm=new String[100];	//거리
+				sStationName=new String[1000];	//측정소
+				sAddr=new String[1000];	//주소
+				sTm=new String[1000];	//거리
 				data=0;
 
 				URL url=new URL(stationUrl);		//URL객체생성
@@ -154,26 +154,23 @@ public class GetStationListThread extends Thread {	//기상청 연결을 위한 
 	 */
 	private void view_text(){
 
-		handler.post(new Runnable() {	//기본 핸들러니깐 handler.post하면됨
+		//기본 핸들러니깐 handler.post하면됨
+		handler.post(() -> {
 
-			@Override
-			public void run() {
-
-				active=false;
-				if(tResponse){		//문서를 다 읽었다
-					tResponse=false;
-					Log.e("station cnt",""+sTotalCount);
-					data=0;		//
-					if(getAPI==1)
-						((MainActivity)MainActivity.mContext).StationListThreadResponse(sTotalCount, sStationName);
-					else if(getAPI==2)
-						((MainActivity)MainActivity.mContext).NearStationThreadResponse(sStationName,sAddr,sTm);
+            active=false;
+            if(tResponse){		//문서를 다 읽었다
+                tResponse=false;
+                Log.e("station cnt",""+sTotalCount);
+                data=0;		//
+                if(getAPI==1)
+                    ((MainActivity)MainActivity.mContext).StationListThreadResponse(sTotalCount, sStationName);
+                else if(getAPI==2)
+                    ((MainActivity)MainActivity.mContext).NearStationThreadResponse(sStationName,sAddr,sTm);
 
 
-				}
+            }
 
 
-			}
-		});
+        });
 	}
 }

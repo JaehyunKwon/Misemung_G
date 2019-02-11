@@ -8,6 +8,7 @@
 
     <application
         tools:targetApi="m"
+        android:name=".MiseMungGApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

@@ -29,18 +29,6 @@
         android:layout_below="@+id/where"
         android:visibility="gone"/>
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/searchListView"
-        android:elevation="6dp"
-        android:minHeight="?attr/actionBarSize"
-        android:visibility="gone"
-        app:tabIndicatorColor="#ffffff"
-        app:tabGravity="center"
-        app:tabMode="scrollable"/>
-
     <Button
         android:id="@+id/this_place"
         android:layout_width="100.3dp"
@@ -48,18 +36,17 @@
         android:layout_marginTop="13.3dp"
         android:layout_marginLeft="21.3dp"
         android:layout_marginRight="5.3dp"
-        android:layout_below="@+id/tab_layout"
-        android:background="@drawable/rectangle_2_copy"/>
+        android:layout_below="@+id/searchListView"
+        android:background="@drawable/rectangle_2_copy"
+        android:textColor="#ffffff"/>
 
-    <Button
-        android:id="@+id/this_detail_place"
-        android:layout_width="81.7dp"
-        android:layout_height="34dp"
+    <net.lucode.hackware.magicindicator.MagicIndicator
+        android:id="@+id/magic_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_marginTop="13.3dp"
-        android:layout_below="@+id/tab_layout"
-        android:layout_toRightOf="@+id/this_place"
-        android:background="@drawable/rectangle_2_1_copy"
-        android:visibility="gone"/>
+        android:layout_below="@+id/searchListView"
+        android:layout_toRightOf="@+id/this_place" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -67,5 +54,14 @@
         android:layout_height="match_parent"
         android:layout_marginTop="16.7dp"
         android:layout_below="@+id/this_place"/>
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/bg_loading"
+        android:visibility="gone"/>
 
 </RelativeLayout>

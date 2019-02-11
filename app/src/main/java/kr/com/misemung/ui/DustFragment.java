@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import kr.com.misemung.R;
+import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.ui.adapter.DustGridAdapter;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
@@ -32,10 +33,11 @@ public class DustFragment extends Fragment {
     private DustGridAdapter adapter;
 
     private AirInfo airInfo;
+    private AirRecord airRecord;
     private String stationName;
 
-    public DustFragment(AirInfo airInfo, String stationName) {
-        this.airInfo = airInfo;
+    public DustFragment(AirRecord airRecord, String stationName) {
+        this.airRecord = airRecord;
         this.stationName = stationName;
     }
 
@@ -62,25 +64,20 @@ public class DustFragment extends Fragment {
         adapter = new DustGridAdapter(getContext());
 
         // 메인 레벨
-        main_level.setText(transGrade(airInfo.getPm25grade1h()));
+        main_level.setText(transMicroDustGrade(airRecord.pm25Grade1h));
         main_place.setText(stationName);
 
-        adapter.addItem(new ListInfo("미세먼지", transGrade(airInfo.getPm10grade1h()), airInfo.getPm10value()+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airInfo.getPm25grade1h()), airInfo.getPm25value()+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("아황산가스", transGrade(airInfo.getSo2grade()), airInfo.getSo2value()+ " ppm"));
-        adapter.addItem(new ListInfo("일산화탄소", transGrade(airInfo.getCograde()), airInfo.getCovalue()+ " ppm"));
-        adapter.addItem(new ListInfo("오존", transGrade(airInfo.getO3grade()), airInfo.getO3value()+ " ppm"));
-        adapter.addItem(new ListInfo("이산화질소", transGrade(airInfo.getNo2grade()), airInfo.getNo2value()+ " ppm"));
+        adapter.addItem(new ListInfo("미세먼지", transGrade(airRecord.pm10Grade1h), airRecord.pm10value+ " ㎍/m³"));
+        adapter.addItem(new ListInfo("초미세먼지", transGrade(airRecord.pm25Grade1h), airRecord.pm25value+ " ㎍/m³"));
+        adapter.addItem(new ListInfo("아황산가스", transGrade(airRecord.so2grade), airRecord.so2value+ " ppm"));
+        adapter.addItem(new ListInfo("일산화탄소", transGrade(airRecord.cograde), airRecord.covalue+ " ppm"));
+        adapter.addItem(new ListInfo("오존", transGrade(airRecord.o3grade), airRecord.o3value+ " ppm"));
+        adapter.addItem(new ListInfo("이산화질소", transGrade(airRecord.no2grade), airRecord.no2value+ " ppm"));
 
         list_recyclerView.setAdapter(adapter);
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
-        position_bottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rootView.scrollTo(0, main_img.getHeight());
-            }
-        });
+        position_bottom.setOnClickListener(v -> rootView.scrollTo(0, main_img.getHeight()));
 
         return rootView;
     }

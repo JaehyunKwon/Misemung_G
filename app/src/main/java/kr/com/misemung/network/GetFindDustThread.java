@@ -74,21 +74,21 @@ public class GetFindDustThread extends Thread {	//기상청 연결을 위한 스
 
 		if(active){
 			try{
-				String[] sDate = new String[100];
-				sSo2Value=new String[100];	//아황산가스 농도
-				sCoValue=new String[100];	//일산화탄소 농도
-				sO3Value=new String[100];	//오존 농도
-				sNo2Value=new String[100];	//이산화질소 농도
-				sPm10Value=new String[100];	//미세먼지 농도
-				sPm25Value=new String[100];	//초미세먼지 농도
-				sKhaiValue=new String[100];	//통합 대기환경수치
-				sKhaiGrade=new String[100];	//통합 대기환경 지수
-				sSo2Grade=new String[100];	//아황산가스 지수
-				sCoGrade=new String[100];	//일산화 탄소 지수
-				sO3Grade=new String[100];	//오존 지수
-				sNo2Grade=new String[100];	//이산화질소 지수
-				sPm10Grade=new String[100];	//미세먼지 지수
-				sPm25Grade=new String[100];	//초미세먼지 지수
+				String[] sDate = new String[1000];
+				sSo2Value=new String[1000];	//아황산가스 농도
+				sCoValue=new String[1000];	//일산화탄소 농도
+				sO3Value=new String[1000];	//오존 농도
+				sNo2Value=new String[1000];	//이산화질소 농도
+				sPm10Value=new String[1000];	//미세먼지 농도
+				sPm25Value=new String[1000];	//초미세먼지 농도
+				sKhaiValue=new String[1000];	//통합 대기환경수치
+				sKhaiGrade=new String[1000];	//통합 대기환경 지수
+				sSo2Grade=new String[1000];	//아황산가스 지수
+				sCoGrade=new String[1000];	//일산화 탄소 지수
+				sO3Grade=new String[1000];	//오존 지수
+				sNo2Grade=new String[1000];	//이산화질소 지수
+				sPm10Grade=new String[1000];	//미세먼지 지수
+				sPm25Grade=new String[1000];	//초미세먼지 지수
 				data=0;
 
 				String dustUrl = API.REQUEST_FIND_DUST() +"?"
@@ -265,21 +265,18 @@ public class GetFindDustThread extends Thread {	//기상청 연결을 위한 스
 	 */
 	private void view_text(){
 
-		handler.post(new Runnable() {	//기본 핸들러니깐 handler.post하면됨
+        //기본 핸들러니깐 handler.post하면됨
+        handler.post(() -> {
 
-			@Override
-			public void run() {
+            active=false;
+            if(tResponse){		//문서를 다 읽었다
+                tResponse=false;
+                data=0;		//
+                ((MainActivity)MainActivity.mContext).FindDustThreadResponse(airInfo);
 
-				active=false;
-				if(tResponse){		//문서를 다 읽었다
-					tResponse=false;
-					data=0;		//
-					((MainActivity)MainActivity.mContext).FindDustThreadResponse(airInfo);
-
-				}
+            }
 
 
-			}
-		});
+        });
 	}
 }
