@@ -26,9 +26,9 @@ public class HandlePreference
 
 	/** Fragment 리스트 사이즈 */
 	public static String FRAGMENT_SIZE = "fragment_size";
-	public static String getFragmentListSize() {
+	public static int getFragmentListSize() {
 		SharedPreferences settings = MiseMungGApplication.Instance().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-		return settings.getString(FRAGMENT_SIZE, "N");
+		return settings.getInt(FRAGMENT_SIZE, 0);
 	}
 	/** Fragment 리스트 사이즈 값 저장 */
 	public static void setFragmentListSize(int size) {

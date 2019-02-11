@@ -32,7 +32,6 @@ public class DustFragment extends Fragment {
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
 
-    private AirInfo airInfo;
     private AirRecord airRecord;
     private String stationName;
 

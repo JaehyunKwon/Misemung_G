@@ -71,16 +71,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		, GoogleApiClient.ConnectionCallbacks {
 
 	//GPS
-	LocationManager locationManager;
+	private LocationManager locationManager;
 
-	GoogleApiClient mGoogleApiClient;
-	Location mLastLocation;
+	private GoogleApiClient mGoogleApiClient;
+	private Location mLastLocation;
 
 	private ProgressBar loadingProgressBar;
 
 	private MagicIndicator magicIndicator;
 
 	private ArrayList<Fragment> fragment_list = new ArrayList<>();
+	private ArrayList<String> stationList = new ArrayList<>();
 	private ViewPager viewPager;
 
 	private SearchAdapter searchAdapter;
@@ -88,13 +89,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private EditText where;
 	private ListView searchListView;
 	private Button this_place;
-	private String stationName = "";
+	public static String stationName = "";
 
-	String from = "WGS84";
-	String to = "TM";
-	static int stationCnt = 0;
+	private String from = "WGS84";
+	private String to = "TM";
+	private static int stationCnt = 0;
 	public static Context mContext;    //static에서 context를 쓰기위해
-	boolean mLocationPermissionGranted = false;
+	private boolean mLocationPermissionGranted = false;
+
+	public static boolean getListFlag = false;
 
 
 	@Override
@@ -155,15 +158,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		this_place.setOnClickListener(this);
 
 		// 처음 페이지 진입할때 DB 데이터 보고 새로 갱신
-		RealmResults<CityRecord> cityList = CityRepository.City.selectByCityList();
+		/*RealmResults<CityRecord> cityList = CityRepository.City.selectByCityList();
 		if (cityList != null) {
 			for (CityRecord record : cityList) {
 				loadingProgressBar.setVisibility(View.VISIBLE);
 				stationName = record.umdName;
 				// 가까운 측정소 찾기 API
 				getNearStation(record.tmX, record.tmY);
+				getListFlag = true;
 			}
-		}
+		}*/
+        getFragmentList();
 
 	}
 
@@ -190,58 +195,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		AirRepository.Air.set(stationName, airInfo);
 
-		//if () {
-			getAddFragmentList();
-		//} else {
+		if (getListFlag) {
 			getFragmentList();
-		//}
+		} else {
+			getAddFragmentList(stationName);
+		}
 
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
 	}
 
-	private void getAddFragmentList() {
-		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList();
+	private void getAddFragmentList(String umdName) {
+		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(umdName);
 
 		if(airListRecord != null) {
-
 			for (int i = 0; i < airListRecord.size(); i++) {
 				fragment_list.add(new DustFragment(airListRecord.get(i), airListRecord.get(i).stationName));
+                stationList.add(stationName);
 
 				Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
-				Log.w("MainActivity", "i ==> " + i);
 				viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+            }
+            magicIndicator.setBackgroundColor(Color.WHITE);
+            CommonNavigator commonNavigator = new CommonNavigator(this);
+            commonNavigator.setScrollPivotX(0.35f);
+            commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+                @Override
+                public int getCount() {
+                    return fragment_list.size();
+                }
 
-				magicIndicator.setBackgroundColor(Color.WHITE);
-				CommonNavigator commonNavigator = new CommonNavigator(this);
-				commonNavigator.setScrollPivotX(0.35f);
-				commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-					@Override
-					public int getCount() {
-						return fragment_list.size();
-					}
+                @Override
+                public IPagerTitleView getTitleView(Context context, final int index) {
+                    //Log.w("MainActivity", "index ==> " + index);
+                    SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
+                    simplePagerTitleView.setText(stationList.get(index));
+                    simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
+                    simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+                    simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
+                    return simplePagerTitleView;
+                }
 
-					@Override
-					public IPagerTitleView getTitleView(Context context, final int index) {
-						Log.w("MainActivity", "finalI ==> " + airListRecord.get(index).stationName);
-						SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-						simplePagerTitleView.setText(airListRecord.get(index).stationName);
-						simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-						simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-						simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-						return simplePagerTitleView;
-					}
+                @Override
+                public IPagerIndicator getIndicator(Context context) {
+                    WrapPagerIndicator indicator = new WrapPagerIndicator(context);
+                    indicator.setFillColor(Color.parseColor("#ebe4e3"));
+                    return indicator;
+                }
+            });
+            magicIndicator.setNavigator(commonNavigator);
+            ViewPagerHelper.bind(magicIndicator, viewPager);
 
-					@Override
-					public IPagerIndicator getIndicator(Context context) {
-						WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-						indicator.setFillColor(Color.parseColor("#ebe4e3"));
-						return indicator;
-					}
-				});
-				magicIndicator.setNavigator(commonNavigator);
-				ViewPagerHelper.bind(magicIndicator, viewPager);
-			}
 			loadingProgressBar.setVisibility(View.GONE);
 		}
 	}
@@ -251,40 +255,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		if (cityList != null) {
 			for (CityRecord record : cityList) {
 				stationName = record.umdName;
-				Log.i("stationName :: ", stationName);
-				Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
-				viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+                stationList.add(stationName);
+				Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
+				RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(stationName);
+				for (int i = 0; i < airListRecord.size(); i++) {
+					fragment_list.add(new DustFragment(airListRecord.get(i), airListRecord.get(i).stationName));
+					viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+				}
+				Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
+            }
+            magicIndicator.setBackgroundColor(Color.WHITE);
+            CommonNavigator commonNavigator = new CommonNavigator(this);
+            commonNavigator.setScrollPivotX(0.35f);
+            commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+                @Override
+                public int getCount() {
+                    return fragment_list.size();
+                }
 
-				magicIndicator.setBackgroundColor(Color.WHITE);
-				CommonNavigator commonNavigator = new CommonNavigator(this);
-				commonNavigator.setScrollPivotX(0.35f);
-				commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-					@Override
-					public int getCount() {
-						return fragment_list.size();
-					}
+                @Override
+                public IPagerTitleView getTitleView(Context context, final int index) {
+                    //Log.w("MainActivity", "index ==> " + index);
+                    SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
+                    simplePagerTitleView.setText(stationList.get(index));
+                    simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
+                    simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+                    simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
+                    return simplePagerTitleView;
+                }
 
-					@Override
-					public IPagerTitleView getTitleView(Context context, final int index) {
-						Log.w("MainActivity", "finalI ==> " + stationName);
-						SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-						simplePagerTitleView.setText(stationName);
-						simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-						simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-						simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-						return simplePagerTitleView;
-					}
+                @Override
+                public IPagerIndicator getIndicator(Context context) {
+                    WrapPagerIndicator indicator = new WrapPagerIndicator(context);
+                    indicator.setFillColor(Color.parseColor("#ebe4e3"));
+                    return indicator;
+                }
+            });
+            magicIndicator.setNavigator(commonNavigator);
+            ViewPagerHelper.bind(magicIndicator, viewPager);
 
-					@Override
-					public IPagerIndicator getIndicator(Context context) {
-						WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-						indicator.setFillColor(Color.parseColor("#ebe4e3"));
-						return indicator;
-					}
-				});
-				magicIndicator.setNavigator(commonNavigator);
-				ViewPagerHelper.bind(magicIndicator, viewPager);
-			}
 		}
 		loadingProgressBar.setVisibility(View.GONE);
 	}
@@ -376,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		} else {
 			//totalcnt.append("\r\n변환된 좌표값은 " + x + "," + y + "입니다.");
 			getNearStation(x, y);
+			getListFlag = false;
 		}
 		GetTransCoordTask.active = false;
 	}
@@ -390,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		switch (v.getId()) {
 
 			case R.id.this_place:
+				loadingProgressBar.setVisibility(View.VISIBLE);
 				findGPS();
 
 				break;
@@ -442,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 		if (mLastLocation != null) {
+			loadingProgressBar.setVisibility(View.GONE);
 			Log.d("mLastLocation", String.valueOf(mLastLocation.getLongitude()) + "," + mLastLocation.getLatitude());
 			getStation(String.valueOf(mLastLocation.getLongitude()), String.valueOf(mLastLocation.getLatitude()));
 		} else {
