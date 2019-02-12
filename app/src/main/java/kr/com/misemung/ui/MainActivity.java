@@ -42,6 +42,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.Wr
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.realm.RealmResults;
 import kr.com.misemung.R;
@@ -80,8 +81,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	private MagicIndicator magicIndicator;
 
-	private ArrayList<Fragment> fragment_list = new ArrayList<>();
-	private ArrayList<String> stationList = new ArrayList<>();
+	private ArrayList<Fragment> fragment_list = new ArrayList<>(); // 프레그먼트 arraylist
+	private ArrayList<String> stationList = new ArrayList<>(); // 탭 title arraylist
+	private ArrayList<String> stationArrList; // 배열을 저장하는 arraylist
 	private ViewPager viewPager;
 
 	private SearchAdapter searchAdapter;
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                 BaseUtil.hideSoftKeyboard(where);
                 where.clearFocus();
+                loadingProgressBar.setVisibility(View.VISIBLE);
                 // API 호출
 				getSearchCityDust(where.getText().toString());
                 return true;
@@ -191,7 +194,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		stationCnt = 0;    //측정개수정보(여기선 1개만 가져온다
 		stationCnt = Integer.parseInt(airInfo.getTotalCount());
 
-		Log.w("stationcnt", String.valueOf(stationCnt));
+		Log.w("MainActivity", "stationCnt :: " + String.valueOf(stationCnt));
+
+		// 데이터가 0 일때 다음 station으로 검색
+		if (stationCnt == 0) {
+			getFindDust(stationArrList.get(1));
+			return;
+		}
 
 		AirRepository.Air.set(stationName, airInfo);
 
@@ -216,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
 				viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
             }
+            viewPager.setCurrentItem(fragment_list.size());
             magicIndicator.setBackgroundColor(Color.WHITE);
             CommonNavigator commonNavigator = new CommonNavigator(this);
             commonNavigator.setScrollPivotX(0.35f);
@@ -227,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public IPagerTitleView getTitleView(Context context, final int index) {
-                    //Log.w("MainActivity", "index ==> " + index);
                     SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
                     simplePagerTitleView.setText(stationList.get(index));
                     simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
@@ -264,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}
 				Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
             }
+			viewPager.setCurrentItem(fragment_list.size());
             magicIndicator.setBackgroundColor(Color.WHITE);
             CommonNavigator commonNavigator = new CommonNavigator(this);
             commonNavigator.setScrollPivotX(0.35f);
@@ -275,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public IPagerTitleView getTitleView(Context context, final int index) {
-                    //Log.w("MainActivity", "index ==> " + index);
                     SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
                     simplePagerTitleView.setText(stationList.get(index));
                     simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
@@ -320,6 +329,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		GetSearchCityListThread.active = false;
 		GetSearchCityListThread.interrupted();
+
+		loadingProgressBar.setVisibility(View.GONE);
 	}
 
 	public void getStationList(String name) {    //이건 측정소 정보가져올 스레드
@@ -356,7 +367,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	public void NearStationThreadResponse(String[] sStation, String[] sAddr, String[] sTm) {    //측정소 정보를 가져온 결과
 		searchListView.setVisibility(View.GONE);
 
-		getFindDust(sStation[0]);
+		// 결과가 나온 측정소 배열 list에 저장
+		stationArrList = new ArrayList<>();
+		stationArrList.addAll(Arrays.asList(sStation));
+
+		// 처음엔 0번째 station으로 검색
+		getFindDust(stationArrList.get(0));
 
 		GetStationListThread.active = false;
 		GetStationListThread.interrupted();

@@ -160,7 +160,7 @@ public class GetStationListThread extends Thread {	//기상청 연결을 위한 
             active=false;
             if(tResponse){		//문서를 다 읽었다
                 tResponse=false;
-                Log.e("station cnt",""+sTotalCount);
+                Log.e("GetStationListThread", "station cnt ==> " + sTotalCount);
                 data=0;		//
                 if(getAPI==1)
                     ((MainActivity)MainActivity.mContext).StationListThreadResponse(sTotalCount, sStationName);

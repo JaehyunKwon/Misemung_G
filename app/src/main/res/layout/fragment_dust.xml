@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/scroll_view">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -61,11 +63,11 @@
 
             <ImageView
                 android:id="@+id/position_bottom"
-                android:layout_width="20dp"
-                android:layout_height="13.7dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="15.8dp"
                 android:layout_marginBottom="28dp"
-                android:background="@drawable/position_bottom"/>
+                android:src="@drawable/position_bottom"/>
 
         </LinearLayout>
 
@@ -74,7 +76,7 @@
             android:layout_below="@+id/ll_main"
             android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 

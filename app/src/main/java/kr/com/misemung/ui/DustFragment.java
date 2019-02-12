@@ -11,17 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import kr.com.misemung.R;
 import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.ui.adapter.DustGridAdapter;
-import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
 
 @SuppressLint("ValidFragment")
 public class DustFragment extends Fragment {
 
+    private ScrollView scroll_view;
     private LinearLayout ll_main;
     private static TextView main_place;
     private TextView main_level;
@@ -44,6 +45,7 @@ public class DustFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dust, container, false);
 
+        scroll_view = rootView.findViewById(R.id.scroll_view);
         ll_main = rootView.findViewById(R.id.ll_main);
         main_place = rootView.findViewById(R.id.main_place);
         main_level = rootView.findViewById(R.id.main_level);
@@ -74,9 +76,10 @@ public class DustFragment extends Fragment {
         adapter.addItem(new ListInfo("이산화질소", transGrade(airRecord.no2grade), airRecord.no2value+ " ppm"));
 
         list_recyclerView.setAdapter(adapter);
+        list_recyclerView.setNestedScrollingEnabled(false);
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
-        position_bottom.setOnClickListener(v -> rootView.scrollTo(0, main_img.getHeight()));
+        position_bottom.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));
 
         return rootView;
     }
@@ -141,4 +144,5 @@ public class DustFragment extends Fragment {
         }
         return trans;
     }
+
 }
