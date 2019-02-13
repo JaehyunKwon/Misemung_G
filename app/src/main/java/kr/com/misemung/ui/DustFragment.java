@@ -70,10 +70,10 @@ public class DustFragment extends Fragment {
 
         adapter.addItem(new ListInfo("미세먼지", transDustGrade(airRecord.pm10value), airRecord.pm10value+ " ㎍/m³"));
         adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airRecord.pm25value), airRecord.pm25value+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("아황산가스", transSO2Grade(airRecord.so2grade), airRecord.so2value+ " ppm"));
-        adapter.addItem(new ListInfo("일산화탄소", transCOGrade(airRecord.cograde), airRecord.covalue+ " ppm"));
-        adapter.addItem(new ListInfo("오존", transO3Grade(airRecord.o3grade), airRecord.o3value+ " ppm"));
-        adapter.addItem(new ListInfo("이산화질소", transNO2Grade(airRecord.no2grade), airRecord.no2value+ " ppm"));
+        adapter.addItem(new ListInfo("아황산가스", transSO2Grade(airRecord.so2value), airRecord.so2value+ " ppm"));
+        adapter.addItem(new ListInfo("일산화탄소", transCOGrade(airRecord.covalue), airRecord.covalue+ " ppm"));
+        adapter.addItem(new ListInfo("오존", transO3Grade(airRecord.o3value), airRecord.o3value+ " ppm"));
+        adapter.addItem(new ListInfo("이산화질소", transNO2Grade(airRecord.no2value), airRecord.no2value+ " ppm"));
 
         list_recyclerView.setAdapter(adapter);
         list_recyclerView.setNestedScrollingEnabled(false);
@@ -191,7 +191,7 @@ public class DustFragment extends Fragment {
     public String transSO2Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            int grade = Integer.parseInt(stringGrade);
+            float grade = Float.parseFloat(stringGrade);
 
             if (grade <= 0.01) { // 제일좋음
                 dTrans = "제일좋음";
@@ -224,7 +224,7 @@ public class DustFragment extends Fragment {
     public String transCOGrade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            int grade = Integer.parseInt(stringGrade);
+            float grade = Float.parseFloat(stringGrade);
 
             if (grade <= 1) { // 제일좋음
                 dTrans = "제일좋음";
@@ -257,7 +257,7 @@ public class DustFragment extends Fragment {
     public String transO3Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            int grade = Integer.parseInt(stringGrade);
+            float grade = Float.parseFloat(stringGrade);
 
             if (grade <= 0.02) { // 제일좋음
                 dTrans = "제일좋음";
@@ -290,7 +290,7 @@ public class DustFragment extends Fragment {
     public String transNO2Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            int grade = Integer.parseInt(stringGrade);
+            float grade = Float.parseFloat(stringGrade);
 
             if (grade <= 0.02) { // 제일좋음
                 dTrans = "제일좋음";
