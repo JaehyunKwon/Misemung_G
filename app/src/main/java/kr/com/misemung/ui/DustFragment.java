@@ -65,15 +65,15 @@ public class DustFragment extends Fragment {
         adapter = new DustGridAdapter(getContext());
 
         // 메인 레벨
-        main_level.setText(transMicroDustGrade(airRecord.pm25Grade1h));
+        main_level.setText(transMicroDustGrade(airRecord.pm25value));
         main_place.setText(stationName);
 
-        adapter.addItem(new ListInfo("미세먼지", transGrade(airRecord.pm10Grade1h), airRecord.pm10value+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("초미세먼지", transGrade(airRecord.pm25Grade1h), airRecord.pm25value+ " ㎍/m³"));
-        adapter.addItem(new ListInfo("아황산가스", transGrade(airRecord.so2grade), airRecord.so2value+ " ppm"));
-        adapter.addItem(new ListInfo("일산화탄소", transGrade(airRecord.cograde), airRecord.covalue+ " ppm"));
-        adapter.addItem(new ListInfo("오존", transGrade(airRecord.o3grade), airRecord.o3value+ " ppm"));
-        adapter.addItem(new ListInfo("이산화질소", transGrade(airRecord.no2grade), airRecord.no2value+ " ppm"));
+        adapter.addItem(new ListInfo("미세먼지", transDustGrade(airRecord.pm10value), airRecord.pm10value+ " ㎍/m³"));
+        adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airRecord.pm25value), airRecord.pm25value+ " ㎍/m³"));
+        adapter.addItem(new ListInfo("아황산가스", transSO2Grade(airRecord.so2grade), airRecord.so2value+ " ppm"));
+        adapter.addItem(new ListInfo("일산화탄소", transCOGrade(airRecord.cograde), airRecord.covalue+ " ppm"));
+        adapter.addItem(new ListInfo("오존", transO3Grade(airRecord.o3grade), airRecord.o3value+ " ppm"));
+        adapter.addItem(new ListInfo("이산화질소", transNO2Grade(airRecord.no2grade), airRecord.no2value+ " ppm"));
 
         list_recyclerView.setAdapter(adapter);
         list_recyclerView.setNestedScrollingEnabled(false);
@@ -84,65 +84,237 @@ public class DustFragment extends Fragment {
         return rootView;
     }
 
-    public String transMicroDustGrade(String intGrade) {
+    /**
+     * 미세먼지 등급
+     * */
+    public String transDustGrade(String stringGrade) {
+        String dTrans;
+        if (!stringGrade.contains("-")) {
+            int grade = Integer.parseInt(stringGrade);
+
+            if (grade <= 15) { // 제일좋음
+                dTrans = "제일좋음";
+            } else if (grade <= 30) { // 매우좋음
+                dTrans = "매우좋음";
+            } else if (grade <= 40) { // 좋음
+                dTrans = "좋음";
+            } else if (grade <= 50) { // 보통
+                dTrans = "보통";
+            } else if (grade <= 75) { // 조심
+                dTrans = "조심";
+            } else if (grade <= 100) { // 나쁨
+                dTrans = "나쁨";
+            } else if (grade <= 150) { // 매우나쁨
+                dTrans = "매우나쁨";
+            } else if (grade > 151) { // 최악
+                dTrans = "최악";
+            } else {
+                dTrans = "정보없음";
+            }
+        } else {
+            dTrans = "정보없음";
+        }
+        return dTrans;
+    }
+
+    /**
+     * 초미세먼지 등급
+     * */
+    public String transMicroDustGrade(String microDust) {
         String mdTrans;
-        switch (intGrade) {
-            case "1":
-                mdTrans = "좋음";
+        if (!microDust.contains("-")) {
+            int grade = Integer.parseInt(microDust);
+            if (grade <= 8) { // 제일좋음
+                mdTrans = "제일좋음";
                 ll_main.setBackgroundResource(R.drawable.rectangle_best);
                 main_img.setImageResource(R.drawable.main_best);
                 main_desc.setText(R.string.best_desc);
-                break;
-            case "2":
+
+            } else if (grade <= 15) { // 매우좋음
+                mdTrans = "매우좋음";
+                ll_main.setBackgroundResource(R.drawable.rectangle_so_good);
+                main_img.setImageResource(R.drawable.main_so_good);
+                main_desc.setText(R.string.so_good_desc);
+
+            } else if (grade <= 20) { // 좋음
+                mdTrans = "좋음";
+                ll_main.setBackgroundResource(R.drawable.rectangle_good);
+                main_img.setImageResource(R.drawable.main_good);
+                main_desc.setText(R.string.good_desc);
+
+            } else if (grade <= 25) { // 보통
                 mdTrans = "보통";
                 ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-                main_img.setBackgroundResource(R.drawable.main_normal);
+                main_img.setImageResource(R.drawable.main_normal);
                 main_desc.setText(R.string.normal_desc);
-                break;
-            case "3":
+
+            } else if (grade <= 37) { // 조심
+                mdTrans = "조심";
+                ll_main.setBackgroundResource(R.drawable.rectangle_careful);
+                main_img.setImageResource(R.drawable.main_careful);
+                main_desc.setText(R.string.careful_desc);
+
+            } else if (grade <= 50) { // 나쁨
                 mdTrans = "나쁨";
                 ll_main.setBackgroundResource(R.drawable.rectangle_bad);
                 main_img.setBackgroundResource(R.drawable.main_bad);
                 main_desc.setText(R.string.bad_desc);
-                break;
-            case "4":
+
+            } else if (grade <= 75) { // 매우나쁨
                 mdTrans = "매우나쁨";
+                ll_main.setBackgroundResource(R.drawable.rectangle_so_bad);
+                main_img.setImageResource(R.drawable.main_so_bad);
+                main_desc.setText(R.string.so_bad_desc);
+
+            } else if (grade > 76){ // 최악
+                mdTrans = "최악";
                 ll_main.setBackgroundResource(R.drawable.rectangle_worst);
                 main_img.setBackgroundResource(R.drawable.main_worst);
                 main_desc.setText(R.string.worst_desc);
-                break;
-            default:
+
+            } else {
                 mdTrans = "정보없음";
                 ll_main.setBackgroundResource(R.drawable.rectangle_normal);
                 main_img.setBackgroundResource(R.drawable.main_normal);
                 main_desc.setText(R.string.default_desc);
-                break;
-
+            }
+        } else {
+            mdTrans = "정보없음";
         }
+
         return mdTrans;
     }
 
-    public String transGrade(String intGrade) {
-        String trans;
-        switch (intGrade) {
-            case "1":
-                trans = "좋음";
-                break;
-            case "2":
-                trans = "보통";
-                break;
-            case "3":
-                trans = "나쁨";
-                break;
-            case "4":
-                trans = "매우나쁨";
-                break;
-            default:
-                trans = "정보없음";
-                break;
+    /**
+     * 아황산가스 등급
+     * */
+    public String transSO2Grade(String stringGrade) {
+        String dTrans;
+        if (!stringGrade.contains("-")) {
+            int grade = Integer.parseInt(stringGrade);
 
+            if (grade <= 0.01) { // 제일좋음
+                dTrans = "제일좋음";
+            } else if (grade <= 0.02) { // 매우좋음
+                dTrans = "매우좋음";
+            } else if (grade <= 0.04) { // 좋음
+                dTrans = "좋음";
+            } else if (grade <= 0.05) { // 보통
+                dTrans = "보통";
+            } else if (grade <= 0.1) { // 조심
+                dTrans = "조심";
+            } else if (grade <= 0.15) { // 나쁨
+                dTrans = "나쁨";
+            } else if (grade <= 0.6) { // 매우나쁨
+                dTrans = "매우나쁨";
+            } else if (grade > 0.7) { // 최악
+                dTrans = "최악";
+            } else {
+                dTrans = "정보없음";
+            }
+        } else {
+            dTrans = "정보없음";
         }
-        return trans;
+        return dTrans;
+    }
+
+    /**
+     * 일산화탄소 등급
+     * */
+    public String transCOGrade(String stringGrade) {
+        String dTrans;
+        if (!stringGrade.contains("-")) {
+            int grade = Integer.parseInt(stringGrade);
+
+            if (grade <= 1) { // 제일좋음
+                dTrans = "제일좋음";
+            } else if (grade <= 2) { // 매우좋음
+                dTrans = "매우좋음";
+            } else if (grade <= 5.5) { // 좋음
+                dTrans = "좋음";
+            } else if (grade <= 9) { // 보통
+                dTrans = "보통";
+            } else if (grade <= 12) { // 조심
+                dTrans = "조심";
+            } else if (grade <= 15) { // 나쁨
+                dTrans = "나쁨";
+            } else if (grade <= 32) { // 매우나쁨
+                dTrans = "매우나쁨";
+            } else if (grade > 33) { // 최악
+                dTrans = "최악";
+            } else {
+                dTrans = "정보없음";
+            }
+        } else {
+            dTrans = "정보없음";
+        }
+        return dTrans;
+    }
+
+    /**
+     * 오존 등급
+     * */
+    public String transO3Grade(String stringGrade) {
+        String dTrans;
+        if (!stringGrade.contains("-")) {
+            int grade = Integer.parseInt(stringGrade);
+
+            if (grade <= 0.02) { // 제일좋음
+                dTrans = "제일좋음";
+            } else if (grade <= 0.03) { // 매우좋음
+                dTrans = "매우좋음";
+            } else if (grade <= 0.06) { // 좋음
+                dTrans = "좋음";
+            } else if (grade <= 0.09) { // 보통
+                dTrans = "보통";
+            } else if (grade <= 0.12) { // 조심
+                dTrans = "조심";
+            } else if (grade <= 0.15) { // 나쁨
+                dTrans = "나쁨";
+            } else if (grade <= 0.38) { // 매우나쁨
+                dTrans = "매우나쁨";
+            } else if (grade > 0.39) { // 최악
+                dTrans = "최악";
+            } else {
+                dTrans = "정보없음";
+            }
+        } else {
+            dTrans = "정보없음";
+        }
+        return dTrans;
+    }
+
+    /**
+     * 이산화질소 등급
+     * */
+    public String transNO2Grade(String stringGrade) {
+        String dTrans;
+        if (!stringGrade.contains("-")) {
+            int grade = Integer.parseInt(stringGrade);
+
+            if (grade <= 0.02) { // 제일좋음
+                dTrans = "제일좋음";
+            } else if (grade <= 0.03) { // 매우좋음
+                dTrans = "매우좋음";
+            } else if (grade <= 0.05) { // 좋음
+                dTrans = "좋음";
+            } else if (grade <= 0.06) { // 보통
+                dTrans = "보통";
+            } else if (grade <= 0.13) { // 조심
+                dTrans = "조심";
+            } else if (grade <= 0.2) { // 나쁨
+                dTrans = "나쁨";
+            } else if (grade <= 1.1) { // 매우나쁨
+                dTrans = "매우나쁨";
+            } else if (grade > 1.2) { // 최악
+                dTrans = "최악";
+            } else {
+                dTrans = "정보없음";
+            }
+        } else {
+            dTrans = "정보없음";
+        }
+        return dTrans;
     }
 
 }

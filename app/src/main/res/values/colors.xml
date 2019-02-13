@@ -11,10 +11,14 @@
 
     <color name="color_tab_indicator">#999999</color>
 
-    <color name="color_best_text">#2588e1</color>
+    <color name="color_best_text">#1587ed</color>
+    <color name="color_so_good_text">#23a1d3</color>
+    <color name="color_good_text">#1fac4e</color>
     <color name="color_normal_text">#77b429</color>
-    <color name="color_bad_text">#bf6228</color>
-    <color name="color_worst_text">#b43c25</color>
+    <color name="color_careful_text">#bf6228</color>
+    <color name="color_bad_text">#b43c25</color>
+    <color name="color_so_bad_text">#9d2424</color>
+    <color name="color_worst_text">#5b1c1c</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>

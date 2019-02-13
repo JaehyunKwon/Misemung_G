@@ -87,20 +87,32 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
         public int transGradeBgColor(String strGrade) {
             int trans;
             switch (strGrade) {
-                case "좋음":
+                case "제일좋음":
                     trans = R.color.color_best_text;
+                    break;
+                case "매우좋음":
+                    trans = R.color.color_so_good_text;
+                    break;
+                case "좋음":
+                    trans = R.color.color_good_text;
                     break;
                 case "보통":
                     trans = R.color.color_normal_text;
+                    break;
+                case "조심":
+                    trans = R.color.color_careful_text;
                     break;
                 case "나쁨":
                     trans = R.color.color_bad_text;
                     break;
                 case "매우나쁨":
+                    trans = R.color.color_so_bad_text;
+                    break;
+                case "최악":
                     trans = R.color.color_worst_text;
                     break;
                 default:
-                    trans = R.color.color_normal_text;
+                    trans = R.color.black;
                     break;
 
             }
