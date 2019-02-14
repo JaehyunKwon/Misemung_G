@@ -31,13 +31,6 @@ public class CityRepository {
             }
         }
 
-        public static RealmResults<CityRecord> selectByCityList(String umdName) {
-
-            return Realm.getDefaultInstance().where(CityRecord.class)
-                    .equalTo("umdName", umdName)
-                    .findAll();
-        }
-
         public static RealmResults<CityRecord> selectByCityList() {
 
             return Realm.getDefaultInstance().where(CityRecord.class)

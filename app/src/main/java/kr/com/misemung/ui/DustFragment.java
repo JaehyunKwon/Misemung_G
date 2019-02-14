@@ -29,6 +29,7 @@ public class DustFragment extends Fragment {
     private TextView main_desc;
     private ImageView main_img;
     private ImageView position_bottom;
+    private LinearLayout bottom_layout;
 
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
@@ -51,6 +52,7 @@ public class DustFragment extends Fragment {
         main_level = rootView.findViewById(R.id.main_level);
         main_desc = rootView.findViewById(R.id.main_desc);
         main_img = rootView.findViewById(R.id.main_img);
+        bottom_layout = rootView.findViewById(R.id.bottom_layout);
         position_bottom = rootView.findViewById(R.id.position_bottom);
         list_recyclerView = rootView.findViewById(R.id.list_recyclerView);
 
@@ -79,7 +81,7 @@ public class DustFragment extends Fragment {
         list_recyclerView.setNestedScrollingEnabled(false);
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
-        position_bottom.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));
+        bottom_layout.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));
 
         return rootView;
     }

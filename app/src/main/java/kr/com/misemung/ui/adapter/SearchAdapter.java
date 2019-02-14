@@ -67,12 +67,15 @@ public class SearchAdapter extends BaseAdapter {
                 + filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName());
 
         viewHolder.umdName.setOnClickListener(v -> {
-            CityRepository.City.set(filtered.get(position).getSidoName()+" "
-                    + filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName(), filtered.get(position));
+            // DB에 저장
+            CityRepository.City.set(filtered.get(position).getSggName()+ " "
+                    + filtered.get(position).getUmdName(), filtered.get(position));
+
             // 가까운 측정소 위치 조회
             getNearStation(filtered.get(position).getTmX(), filtered.get(position).getTmY());
-            MainActivity.stationName = filtered.get(position).getSidoName()+" "
-                    + filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName();
+
+            // 메인 변수값에 set
+            MainActivity.stationName = filtered.get(position).getSggName()+ " " + filtered.get(position).getUmdName();
             MainActivity.getListFlag = false;
         });
 

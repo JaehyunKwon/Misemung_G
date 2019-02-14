@@ -38,11 +38,5 @@ public class AirRepository {
                     .findAll();
         }
 
-        public static RealmResults<AirRecord> selectByList() {
-
-            return Realm.getDefaultInstance().where(AirRecord.class)
-                    .findAll();
-        }
-
     }
 }
