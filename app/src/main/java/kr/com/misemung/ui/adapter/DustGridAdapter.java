@@ -90,10 +90,10 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
                 case "제일좋음":
                     trans = R.color.color_best_text;
                     break;
-                case "매우좋음":
+                case "좋음":
                     trans = R.color.color_so_good_text;
                     break;
-                case "좋음":
+                case "양호":
                     trans = R.color.color_good_text;
                     break;
                 case "보통":

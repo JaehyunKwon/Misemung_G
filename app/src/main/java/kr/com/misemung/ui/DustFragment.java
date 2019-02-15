@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ import kr.com.misemung.vo.ListInfo;
 public class DustFragment extends Fragment {
 
     private ScrollView scroll_view;
-    private LinearLayout ll_main;
+    private RelativeLayout ll_main;
     private static TextView main_place;
     private TextView main_level;
     private TextView main_desc;
@@ -96,10 +97,10 @@ public class DustFragment extends Fragment {
 
             if (grade <= 15) { // 제일좋음
                 dTrans = "제일좋음";
-            } else if (grade <= 30) { // 매우좋음
-                dTrans = "매우좋음";
-            } else if (grade <= 40) { // 좋음
+            } else if (grade <= 30) { // 좋음
                 dTrans = "좋음";
+            } else if (grade <= 40) { // 양호
+                dTrans = "양호";
             } else if (grade <= 50) { // 보통
                 dTrans = "보통";
             } else if (grade <= 75) { // 조심
@@ -132,14 +133,14 @@ public class DustFragment extends Fragment {
                 main_img.setImageResource(R.drawable.main_best);
                 main_desc.setText(R.string.best_desc);
 
-            } else if (grade <= 15) { // 매우좋음
-                mdTrans = "매우좋음";
+            } else if (grade <= 15) { // 좋음
+                mdTrans = "좋음";
                 ll_main.setBackgroundResource(R.drawable.rectangle_so_good);
                 main_img.setImageResource(R.drawable.main_so_good);
                 main_desc.setText(R.string.so_good_desc);
 
-            } else if (grade <= 20) { // 좋음
-                mdTrans = "좋음";
+            } else if (grade <= 20) { // 양호
+                mdTrans = "양호";
                 ll_main.setBackgroundResource(R.drawable.rectangle_good);
                 main_img.setImageResource(R.drawable.main_good);
                 main_desc.setText(R.string.good_desc);
@@ -197,10 +198,10 @@ public class DustFragment extends Fragment {
 
             if (grade <= 0.01) { // 제일좋음
                 dTrans = "제일좋음";
-            } else if (grade <= 0.02) { // 매우좋음
-                dTrans = "매우좋음";
-            } else if (grade <= 0.04) { // 좋음
+            } else if (grade <= 0.02) { // 좋음
                 dTrans = "좋음";
+            } else if (grade <= 0.04) { // 양호
+                dTrans = "양호";
             } else if (grade <= 0.05) { // 보통
                 dTrans = "보통";
             } else if (grade <= 0.1) { // 조심
@@ -230,10 +231,10 @@ public class DustFragment extends Fragment {
 
             if (grade <= 1) { // 제일좋음
                 dTrans = "제일좋음";
-            } else if (grade <= 2) { // 매우좋음
-                dTrans = "매우좋음";
-            } else if (grade <= 5.5) { // 좋음
+            } else if (grade <= 2) { // 좋음
                 dTrans = "좋음";
+            } else if (grade <= 5.5) { // 양호
+                dTrans = "양호";
             } else if (grade <= 9) { // 보통
                 dTrans = "보통";
             } else if (grade <= 12) { // 조심
@@ -263,10 +264,10 @@ public class DustFragment extends Fragment {
 
             if (grade <= 0.02) { // 제일좋음
                 dTrans = "제일좋음";
-            } else if (grade <= 0.03) { // 매우좋음
-                dTrans = "매우좋음";
-            } else if (grade <= 0.06) { // 좋음
+            } else if (grade <= 0.03) { // 좋음
                 dTrans = "좋음";
+            } else if (grade <= 0.06) { // 양호
+                dTrans = "양호";
             } else if (grade <= 0.09) { // 보통
                 dTrans = "보통";
             } else if (grade <= 0.12) { // 조심
@@ -296,10 +297,10 @@ public class DustFragment extends Fragment {
 
             if (grade <= 0.02) { // 제일좋음
                 dTrans = "제일좋음";
-            } else if (grade <= 0.03) { // 매우좋음
-                dTrans = "매우좋음";
-            } else if (grade <= 0.05) { // 좋음
+            } else if (grade <= 0.03) { // 좋음
                 dTrans = "좋음";
+            } else if (grade <= 0.05) { // 양호
+                dTrans = "양호";
             } else if (grade <= 0.06) { // 보통
                 dTrans = "보통";
             } else if (grade <= 0.13) { // 조심
