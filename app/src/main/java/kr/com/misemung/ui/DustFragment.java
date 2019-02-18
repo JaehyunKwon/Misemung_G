@@ -70,11 +70,6 @@ public class DustFragment extends Fragment {
         // 리스트 item Adapter
         adapter = new DustGridAdapter(getContext());
 
-        // 메인 레벨 (미세먼지 등급이 초미세먼지보다 안 좋을 경우 미세먼지 등급기준)
-        main_level.setText(dust_level > mdust_level
-                ? transDustGrade(airRecord.pm10value) : transMicroDustGrade(airRecord.pm25value));
-        main_place.setText(stationName);
-
         adapter.addItem(new ListInfo("미세먼지", transDustGrade(airRecord.pm10value), airRecord.pm10value+ " ㎍/m³"));
         adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airRecord.pm25value), airRecord.pm25value+ " ㎍/m³"));
         adapter.addItem(new ListInfo("아황산가스", transSO2Grade(airRecord.so2value), airRecord.so2value+ " ppm"));
@@ -84,6 +79,11 @@ public class DustFragment extends Fragment {
 
         list_recyclerView.setAdapter(adapter);
         list_recyclerView.setNestedScrollingEnabled(false);
+
+        // 메인 레벨 (미세먼지 등급이 초미세먼지보다 안 좋을 경우 미세먼지 등급기준)
+        main_level.setText(dust_level > mdust_level
+                ? transDustGrade(airRecord.pm10value) : transMicroDustGrade(airRecord.pm25value));
+        main_place.setText(stationName);
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
         bottom_layout.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));

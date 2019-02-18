@@ -16,7 +16,6 @@
             android:layout_centerInParent="true"
             android:textSize="20sp"
             android:textColor="#818181"
-            android:letterSpacing="-0.08"
             android:text="미세먼지"
             />
         <TextView
@@ -28,8 +27,7 @@
             android:layout_marginTop="3dp"
             android:textSize="22sp"
             android:textColor="#2588e1"
-            android:letterSpacing="-0.09"
-            android:text="제일 좋음"
+            android:text="제일좋음"
             />
         <ProgressBar
             android:id="@+id/item_progress"
@@ -50,7 +48,6 @@
             android:layout_marginTop="7dp"
             android:textSize="14sp"
             android:textColor="#818181"
-            android:letterSpacing="-0.08"
             android:gravity="center_horizontal"
             android:text="74 ㎍/m³"
             />
