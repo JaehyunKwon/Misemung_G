@@ -82,7 +82,7 @@ public class DustFragment extends Fragment {
 
         // 메인 레벨 (미세먼지 등급이 초미세먼지보다 안 좋을 경우 미세먼지 등급기준)
         main_level.setText(dust_level > mdust_level
-                ? transDustGrade(airRecord.pm10value) : transMicroDustGrade(airRecord.pm25value));
+                ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
         main_place.setText(stationName);
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
@@ -101,72 +101,42 @@ public class DustFragment extends Fragment {
 
             if (grade <= 15) { // 제일좋음
                 dTrans = "제일좋음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_best);
-                main_img.setImageResource(R.drawable.main_best);
-                main_desc.setText(R.string.best_desc);
                 dust_level = 1;
 
             } else if (grade <= 30) { // 좋음
                 dTrans = "좋음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_so_good);
-                main_img.setImageResource(R.drawable.main_so_good);
-                main_desc.setText(R.string.so_good_desc);
                 dust_level = 2;
 
             } else if (grade <= 40) { // 양호
                 dTrans = "양호";
-                ll_main.setBackgroundResource(R.drawable.rectangle_good);
-                main_img.setImageResource(R.drawable.main_good);
-                main_desc.setText(R.string.good_desc);
                 dust_level = 3;
 
             } else if (grade <= 50) { // 보통
                 dTrans = "보통";
-                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-                main_img.setImageResource(R.drawable.main_normal);
-                main_desc.setText(R.string.normal_desc);
                 dust_level = 4;
 
             } else if (grade <= 75) { // 조심
                 dTrans = "조심";
-                ll_main.setBackgroundResource(R.drawable.rectangle_careful);
-                main_img.setImageResource(R.drawable.main_careful);
-                main_desc.setText(R.string.careful_desc);
                 dust_level = 5;
 
             } else if (grade <= 100) { // 나쁨
                 dTrans = "나쁨";
-                ll_main.setBackgroundResource(R.drawable.rectangle_bad);
-                main_img.setBackgroundResource(R.drawable.main_bad);
-                main_desc.setText(R.string.bad_desc);
                 dust_level = 6;
 
             } else if (grade <= 150) { // 매우나쁨
                 dTrans = "매우나쁨";
-                ll_main.setBackgroundResource(R.drawable.rectangle_so_bad);
-                main_img.setImageResource(R.drawable.main_so_bad);
-                main_desc.setText(R.string.so_bad_desc);
                 dust_level = 7;
 
             } else if (grade > 151) { // 최악
                 dTrans = "최악";
-                ll_main.setBackgroundResource(R.drawable.rectangle_worst);
-                main_img.setBackgroundResource(R.drawable.main_worst);
-                main_desc.setText(R.string.worst_desc);
                 dust_level = 8;
 
             } else {
                 dTrans = "정보없음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-                main_img.setBackgroundResource(R.drawable.main_normal);
-                main_desc.setText(R.string.default_desc);
                 dust_level = 0;
             }
         } else {
             dTrans = "정보없음";
-            ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-            main_img.setBackgroundResource(R.drawable.main_normal);
-            main_desc.setText(R.string.default_desc);
             dust_level = 0;
         }
         return dTrans;
@@ -181,72 +151,42 @@ public class DustFragment extends Fragment {
             int grade = Integer.parseInt(microDust);
             if (grade <= 8) { // 제일좋음
                 mdTrans = "제일좋음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_best);
-                main_img.setImageResource(R.drawable.main_best);
-                main_desc.setText(R.string.best_desc);
                 mdust_level = 1;
 
             } else if (grade <= 15) { // 좋음
                 mdTrans = "좋음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_so_good);
-                main_img.setImageResource(R.drawable.main_so_good);
-                main_desc.setText(R.string.so_good_desc);
                 mdust_level = 2;
 
             } else if (grade <= 20) { // 양호
                 mdTrans = "양호";
-                ll_main.setBackgroundResource(R.drawable.rectangle_good);
-                main_img.setImageResource(R.drawable.main_good);
-                main_desc.setText(R.string.good_desc);
                 mdust_level = 3;
 
             } else if (grade <= 25) { // 보통
                 mdTrans = "보통";
-                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-                main_img.setImageResource(R.drawable.main_normal);
-                main_desc.setText(R.string.normal_desc);
                 mdust_level = 4;
 
             } else if (grade <= 37) { // 조심
                 mdTrans = "조심";
-                ll_main.setBackgroundResource(R.drawable.rectangle_careful);
-                main_img.setImageResource(R.drawable.main_careful);
-                main_desc.setText(R.string.careful_desc);
                 mdust_level = 5;
 
             } else if (grade <= 50) { // 나쁨
                 mdTrans = "나쁨";
-                ll_main.setBackgroundResource(R.drawable.rectangle_bad);
-                main_img.setBackgroundResource(R.drawable.main_bad);
-                main_desc.setText(R.string.bad_desc);
                 mdust_level = 6;
 
             } else if (grade <= 75) { // 매우나쁨
                 mdTrans = "매우나쁨";
-                ll_main.setBackgroundResource(R.drawable.rectangle_so_bad);
-                main_img.setImageResource(R.drawable.main_so_bad);
-                main_desc.setText(R.string.so_bad_desc);
                 mdust_level = 7;
 
             } else if (grade > 76){ // 최악
                 mdTrans = "최악";
-                ll_main.setBackgroundResource(R.drawable.rectangle_worst);
-                main_img.setBackgroundResource(R.drawable.main_worst);
-                main_desc.setText(R.string.worst_desc);
                 mdust_level = 8;
 
             } else {
                 mdTrans = "정보없음";
-                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-                main_img.setBackgroundResource(R.drawable.main_normal);
-                main_desc.setText(R.string.default_desc);
                 mdust_level = 0;
             }
         } else {
             mdTrans = "정보없음";
-            ll_main.setBackgroundResource(R.drawable.rectangle_normal);
-            main_img.setBackgroundResource(R.drawable.main_normal);
-            main_desc.setText(R.string.default_desc);
             mdust_level = 0;
         }
 
@@ -381,6 +321,68 @@ public class DustFragment extends Fragment {
             }
         } else {
             dTrans = "정보없음";
+        }
+        return dTrans;
+    }
+
+    /**
+     * 최종 등급
+     * */
+    public String transFinalGrade(int finalGrade) {
+        String dTrans = "";
+        switch (finalGrade) {
+            case 0:
+                dTrans = "정보없음";
+                main_desc.setText(R.string.default_desc);
+                break;
+            case 1:
+                dTrans = "제일좋음";
+                ll_main.setBackgroundResource(R.drawable.rectangle_best);
+                main_img.setImageResource(R.drawable.main_best);
+                main_desc.setText(R.string.best_desc);
+                break;
+            case 2:
+                dTrans = "좋음";
+                ll_main.setBackgroundResource(R.drawable.rectangle_so_good);
+                main_img.setImageResource(R.drawable.main_so_good);
+                main_desc.setText(R.string.so_good_desc);
+                break;
+            case 3:
+                dTrans = "양호";
+                ll_main.setBackgroundResource(R.drawable.rectangle_good);
+                main_img.setImageResource(R.drawable.main_good);
+                main_desc.setText(R.string.good_desc);
+                break;
+            case 4:
+                dTrans = "보통";
+                ll_main.setBackgroundResource(R.drawable.rectangle_normal);
+                main_img.setImageResource(R.drawable.main_normal);
+                main_desc.setText(R.string.normal_desc);
+                break;
+            case 5:
+                dTrans = "조심";
+                ll_main.setBackgroundResource(R.drawable.rectangle_careful);
+                main_img.setImageResource(R.drawable.main_careful);
+                main_desc.setText(R.string.careful_desc);
+                break;
+            case 6:
+                dTrans = "나쁨";
+                ll_main.setBackgroundResource(R.drawable.rectangle_bad);
+                main_img.setBackgroundResource(R.drawable.main_bad);
+                main_desc.setText(R.string.bad_desc);
+                break;
+            case 7:
+                dTrans = "매우나쁨";
+                ll_main.setBackgroundResource(R.drawable.rectangle_so_bad);
+                main_img.setImageResource(R.drawable.main_so_bad);
+                main_desc.setText(R.string.so_bad_desc);
+                break;
+            case 8:
+                dTrans = "최악";
+                ll_main.setBackgroundResource(R.drawable.rectangle_worst);
+                main_img.setBackgroundResource(R.drawable.main_worst);
+                main_desc.setText(R.string.worst_desc);
+                break;
         }
         return dTrans;
     }
