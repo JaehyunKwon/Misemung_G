@@ -27,4 +27,13 @@
         android:layout_below="@+id/intro_txt"
         android:layout_centerHorizontal="true"
         android:background="@drawable/intro_img" />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/bg_loading"
+        android:visibility="gone"/>
 </RelativeLayout>

@@ -18,13 +18,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmResults;
 import kr.com.misemung.R;
 import kr.com.misemung.common.CommonPopup;
+import kr.com.misemung.realm.entity.CityRecord;
+import kr.com.misemung.realm.repository.CityRepository;
 import kr.com.misemung.util.NetworkConnections;
+
+import static kr.com.misemung.ui.MainActivity.getNearStation;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -32,25 +38,18 @@ public class IntroActivity extends AppCompatActivity {
 
     private final int HANDLER_INTRO_START = 0;
 
+    private ProgressBar loadingProgressBar;
+
     @SuppressLint("HandlerLeak")
-    private Handler mIntroHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+    private Handler mIntroHandler;
 
-            switch (msg.what) {
-
-                case HANDLER_INTRO_START : //인트로 시작
-                    goNextActivity();
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+
+        loadingProgressBar = findViewById(R.id.loadingProgressBar);
 
         startIntro();
 
@@ -59,8 +58,9 @@ public class IntroActivity extends AppCompatActivity {
     private void startIntro() {
         if (NetworkConnections.isConnected() && NetworkConnections.isOnline()) {
             if (getPermission()) {
-                // 인트로 시작
-                mIntroHandler.sendEmptyMessage(HANDLER_INTRO_START);
+                // 2초 후 인트로 액티비티 제거
+                mIntroHandler = new Handler();
+                mIntroHandler.postDelayed(this::goNextActivity, 2000);
             } else {
                 // 퍼미션 요청
                 getDeviceLocation();
@@ -154,4 +154,5 @@ public class IntroActivity extends AppCompatActivity {
                     IntroActivity.this.finish();
                 });
     }
+
 }
