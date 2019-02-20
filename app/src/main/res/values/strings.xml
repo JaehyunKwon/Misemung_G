@@ -5,7 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="gpsUse">GPS사용</string>
     <string name="gpsOn">정확한 위치 측정을 위해 GPS를 켜시겠습니까?</string>
-    <string name="cancel">취소</string>>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="noti_popup_title">알림</string>
+    <string name="network_error_msg">네트워크 상태가 불안정합니다.\n네트워크 연결을 확인해주세요.</string>
+
+    <string name="location_permission_error">위치 접근 권한이 없습니다. \n해당 권한이 있어야 미세멍지 이용이 가능합니다.</string>
 
     <string name="default_desc">측정 정보가 없어요!</string>
     <string name="best_desc">집에만 있기 아까워요!\n자세한 정보가 궁금하다면</string>

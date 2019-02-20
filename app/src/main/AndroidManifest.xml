@@ -14,7 +14,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="kr.com.misemung.ui.MainActivity"
+
+        <!-- 인트로 화면 -->
+        <activity android:name="kr.com.misemung.ui.IntroActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,6 +28,10 @@
         </intent-filter>
 
         </activity>
+
+        <!-- 메인 화면 -->
+        <activity android:name=".ui.MainActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -31,4 +31,50 @@
     <color name="indicator_2">#64A4A4</color>
     <color name="indicator_3">#66D7B9</color>
     <color name="indicator_4">#FDBC7D</color>
+
+    <color name="color_365fdd">#365fdd</color>
+
+
+    <color name="colorCommonPopupBack">#FFFFFF</color>
+    <color name="colorCommonPopupRedBtnBack">#FF442C</color>
+    <color name="colorCommonPopupRedBtnPress">#C41E09</color>
+    <color name="colorCommonPopupGrayBtnBack">#8F8F8F</color>
+    <color name="colorCommonPopupGrayBtnPress">#6E6E6E</color>
+    <color name="colorCommonPopupBtnText">#FFFFFF</color>
+    <color name="colorCommonPopupText">#212121</color>
+    <color name="colorCommonPopupLine">#E4E5E6</color>
+
+    <color name="colorCommonRed">#FF442C</color>
+
+    <color name="colorMenuHeaderBack">#F7F7F7</color>
+    <color name="colorMenuHeaderBlackBack">#3E424F</color>
+    <color name="colorMenuLine">#FF442C</color>
+    <color name="colorMenuText">#3A3A3A</color>
+    <color name="colorMenuWhite">#FFFFFF</color>
+    <color name="colorMenuGray">#7F8495</color>
+
+    <color name="colorMenuNormal">#FFFFFF</color>
+    <color name="colorMenuPress">#F7F7F7</color>
+
+    <color name="colorNormalText">#212121</color>
+    <color name="colorRedText">#F46567</color>
+    <color name="colorDarkGrayText">#666666</color>
+    <color name="colorGrayText">#C8C8CE</color>
+    <color name="colorBlueText">#4C99D5</color>
+    <color name="colorNaverText">#20BC04</color>
+
+    <color name="colorLoginGrayBox">#DFE1E3</color>
+
+    <color name="colorBtnTextRed">#FF442C</color>
+    <color name="colorBtnTextWhite">#FFFFFF</color>
+
+    <color name="colorListDevider">#F0F0F0</color>
+
+    <color name="colorCommonEditBack">#FFFFFF</color>
+    <color name="colorCommonEditLine">#D9D9D8</color>
+
+    <color name="color_818181">#818181</color>
+
+    <color name="colorDeviceManageTopBack">#F5F6F8</color>
+    <color name="colorMannerTimeBoxLine">#DADADA</color>
 </resources>

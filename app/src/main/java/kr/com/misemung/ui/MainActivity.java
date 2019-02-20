@@ -107,24 +107,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		getDeviceLocation();
 
+        initLayout();
 	}
 
-	private void getDeviceLocation() {
-		if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-				Manifest.permission.ACCESS_FINE_LOCATION)
-				== PackageManager.PERMISSION_GRANTED) {
-			mLocationPermissionGranted = true;
-			init();
-		} else {
-			ActivityCompat.requestPermissions(this,
-					new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-					1000);
-		}
-	}
 
-	public void init() {
+	public void initLayout() {
 
 		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -422,26 +410,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				break;
 			default:
 				break;
-		}
-	}
-
-
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode,
-										   @NonNull String permissions[],
-										   @NonNull int[] grantResults) {
-		mLocationPermissionGranted = false;
-		switch (requestCode) {
-			case 1000: {
-				// If request is cancelled, the result arrays are empty.
-				for (String permission : permissions) {
-					if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-						mLocationPermissionGranted = true;
-						init();
-					}
-				}
-			}
 		}
 	}
 

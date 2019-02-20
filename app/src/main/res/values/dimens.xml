@@ -3,4 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="common_navigator_height">45dp</dimen>
+
+    <dimen name="common_popup_margin">10dp</dimen>
+    <dimen name="common_popup_btn_height">38dp</dimen>
+    <dimen name="common_popup_title_size">15dp</dimen>
+    <dimen name="common_popup_msg_size">13dp</dimen>
+    <dimen name="common_popup_btn_text_size">13dp</dimen>
 </resources>
