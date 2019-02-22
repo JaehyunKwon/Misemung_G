@@ -11,8 +11,9 @@ import kr.com.misemung.vo.AirInfo;
 public class AirRecord implements RealmModel {
 
     @PrimaryKey
-    public String stationName;
+    public int id;
 
+    public String stationName;
     public String date = "";
     public String so2value = "";
     public String covalue = "";

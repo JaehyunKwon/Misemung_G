@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import net.lucode.hackware.magicindicator.FragmentContainerHelper;
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
@@ -57,6 +59,7 @@ import kr.com.misemung.realm.repository.CityRepository;
 import kr.com.misemung.ui.adapter.DustPagerAdapter;
 import kr.com.misemung.ui.adapter.SearchAdapter;
 import kr.com.misemung.util.BaseUtil;
+import kr.com.misemung.util.HandlePreference;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.CityInfo;
 
@@ -100,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private boolean mLocationPermissionGranted = false;
 
 	public static boolean getListFlag = false;
+
+	private FragmentContainerHelper mFramentContainerHelper;
 
 
 	@Override
@@ -213,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
 				viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
             }
-            viewPager.setCurrentItem(fragment_list.size());
             magicIndicator.setBackgroundColor(Color.WHITE);
             CommonNavigator commonNavigator = new CommonNavigator(this);
             commonNavigator.setScrollPivotX(0.35f);
@@ -229,7 +233,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     simplePagerTitleView.setText(stationList.get(index));
                     simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
                     simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-                    simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
+                    simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
+					setCurrentItem(viewPager, index);
                     return simplePagerTitleView;
                 }
 
@@ -242,6 +247,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             magicIndicator.setNavigator(commonNavigator);
             ViewPagerHelper.bind(magicIndicator, viewPager);
+			mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
+			mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
 
 			loadingProgressBar.setVisibility(View.GONE);
 		}
@@ -261,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				}
 				Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
             }
-			viewPager.setCurrentItem(fragment_list.size());
             magicIndicator.setBackgroundColor(Color.WHITE);
             CommonNavigator commonNavigator = new CommonNavigator(this);
             commonNavigator.setScrollPivotX(0.35f);
@@ -277,7 +283,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     simplePagerTitleView.setText(stationList.get(index));
                     simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
                     simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-                    simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
+                    simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
+					setCurrentItem(viewPager, index);
                     return simplePagerTitleView;
                 }
 
@@ -290,9 +297,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             magicIndicator.setNavigator(commonNavigator);
             ViewPagerHelper.bind(magicIndicator, viewPager);
+			mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
+			mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
+
 
 		}
 		loadingProgressBar.setVisibility(View.GONE);
+	}
+
+	private void setCurrentItem(ViewPager viewPager, int index) {
+		Log.i("MainActivity", "index ==> " + index);
+		viewPager.setCurrentItem(index);
+		HandlePreference.setFragmentListSize(index);
+		Log.w("MainActivity", "getFragment ==> " + HandlePreference.getFragmentListSize());
 	}
 
 	/**

@@ -12,6 +12,8 @@ import kr.com.misemung.vo.CityInfo;
 public class CityRecord implements RealmModel {
 
     @PrimaryKey
+    public int id;
+
     public String umdName;
     public String tmX;
     public String tmY;

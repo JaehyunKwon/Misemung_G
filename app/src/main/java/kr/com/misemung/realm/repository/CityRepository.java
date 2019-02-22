@@ -18,8 +18,16 @@ public class CityRepository {
             try {
                 realm.beginTransaction();
 
+                Number nextID = (realm.where(AirRecord.class).max("id"));
+                if (nextID == null) {
+                    nextID = 1;
+                } else {
+                    nextID = nextID.intValue() + 1;
+                }
+
                 CityRecord record = new CityRecord(cityInfo);
                 record.umdName = umdName;
+                record.id = (int) nextID;
 
                 realm.insertOrUpdate(record);
                 realm.commitTransaction();

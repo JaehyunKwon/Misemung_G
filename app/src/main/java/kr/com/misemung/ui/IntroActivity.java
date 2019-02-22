@@ -108,7 +108,7 @@ public class IntroActivity extends AppCompatActivity {
                 for (String permission : permissions) {
                     if (ContextCompat.checkSelfPermission(this, permission)
                             == PackageManager.PERMISSION_GRANTED) {
-                        goNextActivity();
+                        startIntro();
                     } else {
                         reCheckPermissions();
                     }

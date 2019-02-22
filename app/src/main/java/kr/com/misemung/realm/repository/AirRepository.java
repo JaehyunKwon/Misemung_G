@@ -18,8 +18,16 @@ public class AirRepository {
             try {
                 realm.beginTransaction();
 
+                Number nextID = (realm.where(AirRecord.class).max("id"));
+                if (nextID == null) {
+                    nextID = 1;
+                } else {
+                    nextID = nextID.intValue() + 1;
+                }
+
                 AirRecord record = new AirRecord(airInfo);
                 record.stationName = stationName;
+                record.id = (int) nextID;
 
                 realm.insertOrUpdate(record);
                 realm.commitTransaction();
@@ -36,6 +44,14 @@ public class AirRepository {
             return Realm.getDefaultInstance().where(AirRecord.class)
                     .equalTo("stationName", stationName)
                     .findAll();
+        }
+
+        public static AirRecord selectByDustData(int id, String stationName) {
+
+            return Realm.getDefaultInstance().where(AirRecord.class)
+                    .equalTo("stationName", stationName)
+                    .equalTo("id", id)
+                    .findFirst();
         }
 
     }
