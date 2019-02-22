@@ -60,7 +60,7 @@ public class IntroActivity extends AppCompatActivity {
             if (getPermission()) {
                 // 2초 후 인트로 액티비티 제거
                 mIntroHandler = new Handler();
-                mIntroHandler.postDelayed(this::goNextActivity, 2000);
+                mIntroHandler.postDelayed(this::goNextActivity, 1000);
             } else {
                 // 퍼미션 요청
                 getDeviceLocation();
