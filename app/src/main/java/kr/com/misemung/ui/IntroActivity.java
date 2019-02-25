@@ -138,6 +138,7 @@ public class IntroActivity extends AppCompatActivity {
     private void goNextActivity() {
         //인트로 화면 노출
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }

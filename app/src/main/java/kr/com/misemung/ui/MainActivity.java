@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	public static boolean getListFlag = false;
 
+	private int seq = 0;
+
 	private FragmentContainerHelper mFramentContainerHelper;
 
 
@@ -200,108 +202,104 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		if (getListFlag) {
 			getFragmentList();
 		} else {
-			getAddFragmentList(stationName);
+			if (seq == 0) {
+				seq = 1;
+			} else {
+				seq = seq++;
+			}
+			getAddFragmentList(seq, stationName);
 		}
 
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
 	}
 
-	private void getAddFragmentList(String umdName) {
-		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(umdName);
+	private void getAddFragmentList(int id, String umdName) {
 
-		if(airListRecord != null) {
-			for (int i = 0; i < airListRecord.size(); i++) {
-				fragment_list.add(new DustFragment(airListRecord.get(i), airListRecord.get(i).stationName));
-                stationList.add(stationName);
+		AirRecord airRecord = AirRepository.Air.selectByDustData(id, umdName);
+		fragment_list.add(new DustFragment(airRecord, airRecord.stationName));
+		stationList.add(airRecord.stationName);
 
-				Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
-				viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
-            }
-            magicIndicator.setBackgroundColor(Color.WHITE);
-            CommonNavigator commonNavigator = new CommonNavigator(this);
-            commonNavigator.setScrollPivotX(0.35f);
-            commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-                @Override
-                public int getCount() {
-                    return fragment_list.size();
-                }
+		Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
+		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+		magicIndicator.setBackgroundColor(Color.WHITE);
+		CommonNavigator commonNavigator = new CommonNavigator(this);
+		commonNavigator.setScrollPivotX(0.35f);
+		commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+			@Override
+			public int getCount() {
+				return fragment_list.size();
+			}
 
-                @Override
-                public IPagerTitleView getTitleView(Context context, final int index) {
-                    SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-                    simplePagerTitleView.setText(stationList.get(index));
-                    simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-                    simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-                    simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
-					setCurrentItem(viewPager, index);
-                    return simplePagerTitleView;
-                }
+			@Override
+			public IPagerTitleView getTitleView(Context context, final int index) {
+				SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
+				simplePagerTitleView.setText(stationList.get(index));
+				simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
+				simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+				simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
+				setCurrentItem(viewPager, index);
+				return simplePagerTitleView;
+			}
 
-                @Override
-                public IPagerIndicator getIndicator(Context context) {
-                    WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-                    indicator.setFillColor(Color.parseColor("#ebe4e3"));
-                    return indicator;
-                }
-            });
-            magicIndicator.setNavigator(commonNavigator);
-            ViewPagerHelper.bind(magicIndicator, viewPager);
-			mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
-			mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
+			@Override
+			public IPagerIndicator getIndicator(Context context) {
+				WrapPagerIndicator indicator = new WrapPagerIndicator(context);
+				indicator.setFillColor(Color.parseColor("#ebe4e3"));
+				return indicator;
+			}
+		});
+		magicIndicator.setNavigator(commonNavigator);
+		ViewPagerHelper.bind(magicIndicator, viewPager);
+		mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
+		mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
 
-			loadingProgressBar.setVisibility(View.GONE);
-		}
+		loadingProgressBar.setVisibility(View.GONE);
 	}
 
 	private void getFragmentList() {
-		RealmResults<CityRecord> cityList = CityRepository.City.selectByCityList();
-		if (cityList != null) {
-			for (CityRecord record : cityList) {
-				stationName = record.umdName;
-                stationList.add(stationName);
-				Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
-				RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(stationName);
-				for (int i = 0; i < airListRecord.size(); i++) {
-					fragment_list.add(new DustFragment(airListRecord.get(i), airListRecord.get(i).stationName));
-					viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
-				}
-				Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
+        Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
+        RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(stationName);
+        for (int i = 0; i < airListRecord.size(); i++) {
+            AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
+
+			stationList.add(airRecord.stationName);
+            fragment_list.add(new DustFragment(airRecord, airRecord.stationName));
+            viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+        }
+        Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
+        magicIndicator.setBackgroundColor(Color.WHITE);
+        CommonNavigator commonNavigator = new CommonNavigator(this);
+        commonNavigator.setScrollPivotX(0.35f);
+        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+            @Override
+            public int getCount() {
+                return fragment_list.size();
             }
-            magicIndicator.setBackgroundColor(Color.WHITE);
-            CommonNavigator commonNavigator = new CommonNavigator(this);
-            commonNavigator.setScrollPivotX(0.35f);
-            commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-                @Override
-                public int getCount() {
-                    return fragment_list.size();
-                }
 
-                @Override
-                public IPagerTitleView getTitleView(Context context, final int index) {
-                    SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-                    simplePagerTitleView.setText(stationList.get(index));
-                    simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-                    simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
-                    simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
-					setCurrentItem(viewPager, index);
-                    return simplePagerTitleView;
-                }
+            @Override
+            public IPagerTitleView getTitleView(Context context, final int index) {
+                SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
+                simplePagerTitleView.setText(stationList.get(index));
+                simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
+                simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+                simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
+                setCurrentItem(viewPager, index);
+                return simplePagerTitleView;
+            }
 
-                @Override
-                public IPagerIndicator getIndicator(Context context) {
-                    WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-                    indicator.setFillColor(Color.parseColor("#ebe4e3"));
-                    return indicator;
-                }
-            });
-            magicIndicator.setNavigator(commonNavigator);
-            ViewPagerHelper.bind(magicIndicator, viewPager);
-			mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
-			mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
+            @Override
+            public IPagerIndicator getIndicator(Context context) {
+                WrapPagerIndicator indicator = new WrapPagerIndicator(context);
+                indicator.setFillColor(Color.parseColor("#ebe4e3"));
+                return indicator;
+            }
+        });
+        magicIndicator.setNavigator(commonNavigator);
+        ViewPagerHelper.bind(magicIndicator, viewPager);
+        mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
+        mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
 
-
-		}
 		loadingProgressBar.setVisibility(View.GONE);
 	}
 

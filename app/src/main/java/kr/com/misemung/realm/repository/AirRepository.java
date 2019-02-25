@@ -39,6 +39,12 @@ public class AirRepository {
             }
         }
 
+        public static RealmResults<AirRecord> selectByAllList() {
+
+            return Realm.getDefaultInstance().where(AirRecord.class)
+                    .findAll();
+        }
+
         public static RealmResults<AirRecord> selectByList(String stationName) {
 
             return Realm.getDefaultInstance().where(AirRecord.class)
@@ -49,8 +55,8 @@ public class AirRepository {
         public static AirRecord selectByDustData(int id, String stationName) {
 
             return Realm.getDefaultInstance().where(AirRecord.class)
-                    .equalTo("stationName", stationName)
                     .equalTo("id", id)
+                    .equalTo("stationName", stationName)
                     .findFirst();
         }
 
