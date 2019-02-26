@@ -50,12 +50,17 @@
         android:layout_below="@+id/searchListView"
         android:layout_toRightOf="@+id/this_place" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16.7dp"
-        android:layout_below="@+id/this_place"/>
+        android:layout_below="@+id/this_place">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"

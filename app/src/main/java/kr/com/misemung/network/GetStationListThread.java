@@ -165,7 +165,7 @@ public class GetStationListThread extends Thread {	//기상청 연결을 위한 
                 if(getAPI==1)
                     ((MainActivity)MainActivity.mContext).StationListThreadResponse(sTotalCount, sStationName);
                 else if(getAPI==2)
-                    ((MainActivity)MainActivity.mContext).NearStationThreadResponse(sStationName,sAddr,sTm);
+                    ((MainActivity)MainActivity.mContext).NearStationThreadResponse(sStationName);
 
 
             }

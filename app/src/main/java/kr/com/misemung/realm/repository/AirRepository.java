@@ -60,5 +60,25 @@ public class AirRepository {
                     .findFirst();
         }
 
+        public static void updateDustData(int id, AirInfo airInfo, String stationName) {
+            Realm realm = Realm.getDefaultInstance();
+
+            try {
+                realm.beginTransaction();
+
+                AirRecord record = new AirRecord(airInfo);
+                record.id = id;
+                record.stationName = stationName;
+
+                realm.insertOrUpdate(record);
+                realm.commitTransaction();
+            } catch (Exception e) {
+                e.printStackTrace();
+                realm.cancelTransaction();
+            } finally {
+                realm.close();
+            }
+        }
+
     }
 }

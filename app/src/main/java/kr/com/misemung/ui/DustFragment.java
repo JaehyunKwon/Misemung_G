@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,15 +16,18 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import kr.com.misemung.R;
 import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.ui.adapter.DustGridAdapter;
+import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
 
 @SuppressLint("ValidFragment")
 public class DustFragment extends Fragment {
 
-    private ScrollView scroll_view;
+    private NestedScrollView scroll_view;
     private RelativeLayout ll_main;
     private static TextView main_place;
     private TextView main_level;
@@ -35,6 +39,7 @@ public class DustFragment extends Fragment {
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
 
+    private AirInfo airInfo;
     private AirRecord airRecord;
     private String stationName;
 
@@ -43,6 +48,18 @@ public class DustFragment extends Fragment {
 
     public DustFragment(AirRecord airRecord, String stationName) {
         this.airRecord = airRecord;
+        this.stationName = stationName;
+    }
+
+    public DustFragment(AirInfo airInfo, String stationName) {
+        this.airInfo = airInfo;
+        this.airRecord = new AirRecord();
+        airRecord.pm10value = airInfo.getPm10value();
+        airRecord.pm25value = airInfo.getPm25value();
+        airRecord.so2value = airInfo.getSo2value();
+        airRecord.covalue = airInfo.getCovalue();
+        airRecord.o3value = airInfo.getO3value();
+        airRecord.no2value = airInfo.getNo2value();
         this.stationName = stationName;
     }
 

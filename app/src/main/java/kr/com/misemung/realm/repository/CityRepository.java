@@ -45,5 +45,12 @@ public class CityRepository {
                     .findAll();
         }
 
+        public static CityRecord selectByCityData(int id) {
+
+            return Realm.getDefaultInstance().where(CityRecord.class)
+                    .equalTo("id", id)
+                    .findFirst();
+        }
+
     }
 }

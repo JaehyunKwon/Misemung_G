@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -45,6 +46,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Simple
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import io.realm.RealmResults;
 import kr.com.misemung.R;
@@ -72,9 +74,13 @@ import kr.com.misemung.vo.CityInfo;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 		, GoogleApiClient.OnConnectionFailedListener
-		, GoogleApiClient.ConnectionCallbacks {
+		, GoogleApiClient.ConnectionCallbacks
+		, SwipeRefreshLayout.OnRefreshListener {
 
-	//GPS
+
+	private SwipeRefreshLayout mSwipeRefreshLayout;	// 아래로 드래그 후 새로고침하는 레이아웃
+
+	// GPS
 	private LocationManager locationManager;
 
 	private GoogleApiClient mGoogleApiClient;
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	public static boolean getListFlag = false;
 
-	private int seq = 0;
+	private int seq;
 
 	private FragmentContainerHelper mFramentContainerHelper;
 
@@ -125,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		mContext = this;    //static에서 context를 쓰기위해~
 
+		mSwipeRefreshLayout = findViewById(R.id.swipe_layout);
 		loadingProgressBar = findViewById(R.id.loadingProgressBar);
         magicIndicator = findViewById(R.id.magic_indicator);
 		viewPager = findViewById(R.id.viewpager);
@@ -155,17 +162,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		this_place.setText("현재위치");
 		this_place.setOnClickListener(this);
 
-		// 처음 페이지 진입할때 DB 데이터 보고 새로 갱신
-		/*RealmResults<CityRecord> cityList = CityRepository.City.selectByCityList();
-		if (cityList != null) {
-			for (CityRecord record : cityList) {
-				loadingProgressBar.setVisibility(View.VISIBLE);
-				stationName = record.umdName;
-				// 가까운 측정소 찾기 API
-				getNearStation(record.tmX, record.tmY);
-				getListFlag = true;
-			}
-		}*/
+		// 아래로 드래그 후 새로고침
+		mSwipeRefreshLayout.setOnRefreshListener(this);
+
         getFragmentList();
 
 	}
@@ -193,19 +192,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		// 데이터가 0 일때 다음 station으로 검색
 		if (stationCnt == 0) {
-			getFindDust(stationArrList.get(1));
+			getFindDust(stationName);
 			return;
 		}
 
-		AirRepository.Air.set(stationName, airInfo);
-
 		if (getListFlag) {
-			getFragmentList();
+			//update
+			AirRepository.Air.updateDustData(viewPager.getCurrentItem()+1, airInfo, stationName);
+
+			//adapter 새로고침
+			Objects.requireNonNull(viewPager.getAdapter()).notifyDataSetChanged();
+			getListFlag = false;
+
+			if (mSwipeRefreshLayout.isRefreshing()) {
+				// 새로고침 완료
+				mSwipeRefreshLayout.setRefreshing(false);
+			}
 		} else {
-			if (seq == 0) {
+			AirRepository.Air.set(stationName, airInfo);
+
+			if (fragment_list.size() == 0) {
 				seq = 1;
 			} else {
-				seq = seq++;
+				seq = fragment_list.size()+1;
 			}
 			getAddFragmentList(seq, stationName);
 		}
@@ -216,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	private void getAddFragmentList(int id, String umdName) {
 
+		Log.w("MainActivity", "id ==> " + id);
 		AirRecord airRecord = AirRepository.Air.selectByDustData(id, umdName);
 		fragment_list.add(new DustFragment(airRecord, airRecord.stationName));
 		stationList.add(airRecord.stationName);
@@ -259,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	private void getFragmentList() {
         Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
-        RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByList(stationName);
+        RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
         for (int i = 0; i < airListRecord.size(); i++) {
             AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
 
@@ -367,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	/**
 	 * 가까운 측정소 API 조회 결과
 	 * */
-	public void NearStationThreadResponse(String[] sStation, String[] sAddr, String[] sTm) {    //측정소 정보를 가져온 결과
+	public void NearStationThreadResponse(String[] sStation) {    //측정소 정보를 가져온 결과
 		searchListView.setVisibility(View.GONE);
 
 		// 결과가 나온 측정소 배열 list에 저장
@@ -390,19 +400,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			GetTransCoordTask.active = true;
 			new GetTransCoordTask(mContext, false, xGrid, yGrid, from, to);        //스레드생성(UI 스레드사용시 system 뻗는다)
 		} else {
-			Toast.makeText(getApplication(), "좌표값 잘못 되었습니다.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "좌표값 잘못 되었습니다.", Toast.LENGTH_SHORT).show();
 		}
 
 	}
 
-	public static void TransCoordThreadResponse(String x, String y) {    //대기정보 가져온 결과값
+	public static void TransCoordThreadResponse(String x, String y, String addr) {    //대기정보 가져온 결과값
 		if (x == null || y == null) {
 			return;
 		}
 
 		if (x.equals("NaN") || y.equals("NaN")) {
+			Toast.makeText(mContext, "제대로 된 좌표값이 전달 되지 않았습니다.", Toast.LENGTH_LONG).show();
 		} else {
-			//totalcnt.append("\r\n변환된 좌표값은 " + x + "," + y + "입니다.");
+			stationName = addr;
 			getNearStation(x, y);
 			getListFlag = false;
 		}
@@ -455,7 +466,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			loadingProgressBar.setVisibility(View.GONE);
 			Log.d("mLastLocation", String.valueOf(mLastLocation.getLongitude()) + "," + mLastLocation.getLatitude());
 			getStation(String.valueOf(mLastLocation.getLongitude()), String.valueOf(mLastLocation.getLatitude()));
-		} else {
 		}
 
 		mGoogleApiClient.disconnect();
@@ -494,6 +504,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	}
 
+	/**
+	 * 새로고침
+	 * */
+	@Override
+	public void onRefresh() {
+		mSwipeRefreshLayout.setColorSchemeResources(
+				android.R.color.holo_blue_bright,
+				android.R.color.holo_green_light,
+				android.R.color.holo_orange_light,
+				android.R.color.holo_red_light
+		);
+
+		getListFlag = true;
+
+		CityRecord record = CityRepository.City.selectByCityData(viewPager.getCurrentItem()+1);
+		if (record != null) {
+			getNearStation(record.tmX, record.tmY);
+		}
+	}
 }
 
 
