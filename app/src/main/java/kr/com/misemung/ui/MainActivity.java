@@ -520,6 +520,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		CityRecord record = CityRepository.City.selectByCityData(viewPager.getCurrentItem()+1);
 		if (record != null) {
+			stationName = record.umdName;
 			getNearStation(record.tmX, record.tmY);
 		}
 	}
