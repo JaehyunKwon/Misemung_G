@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
 				simplePagerTitleView.setText(stationList.get(index));
 				simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-				simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+				simplePagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
 				simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
 				setCurrentItem(viewPager, index);
 				return simplePagerTitleView;
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			@Override
 			public IPagerIndicator getIndicator(Context context) {
 				WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-				indicator.setFillColor(Color.parseColor("#ebe4e3"));
+				indicator.setFillColor(Color.parseColor("#9e9e9e"));
 				return indicator;
 			}
 		});
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
                 simplePagerTitleView.setText(stationList.get(index));
                 simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-                simplePagerTitleView.setSelectedColor(Color.parseColor("#e94220"));
+                simplePagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
                 simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
                 setCurrentItem(viewPager, index);
                 return simplePagerTitleView;
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-                indicator.setFillColor(Color.parseColor("#ebe4e3"));
+                indicator.setFillColor(Color.parseColor("#9e9e9e"));
                 return indicator;
             }
         });

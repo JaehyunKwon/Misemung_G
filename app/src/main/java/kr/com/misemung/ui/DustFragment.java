@@ -51,18 +51,6 @@ public class DustFragment extends Fragment {
         this.stationName = stationName;
     }
 
-    public DustFragment(AirInfo airInfo, String stationName) {
-        this.airInfo = airInfo;
-        this.airRecord = new AirRecord();
-        airRecord.pm10value = airInfo.getPm10value();
-        airRecord.pm25value = airInfo.getPm25value();
-        airRecord.so2value = airInfo.getSo2value();
-        airRecord.covalue = airInfo.getCovalue();
-        airRecord.o3value = airInfo.getO3value();
-        airRecord.no2value = airInfo.getNo2value();
-        this.stationName = stationName;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dust, container, false);
