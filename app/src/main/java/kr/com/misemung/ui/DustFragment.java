@@ -29,7 +29,8 @@ public class DustFragment extends Fragment {
 
     private NestedScrollView scroll_view;
     private RelativeLayout ll_main;
-    private static TextView main_place;
+    private ImageView delete_btn;
+    private TextView main_place;
     private TextView main_level;
     private TextView main_desc;
     private ImageView main_img;
@@ -46,6 +47,8 @@ public class DustFragment extends Fragment {
     private int dust_level;
     private int mdust_level;
 
+    public DustFragment() {}
+
     public DustFragment(AirRecord airRecord, String stationName) {
         this.airRecord = airRecord;
         this.stationName = stationName;
@@ -57,6 +60,7 @@ public class DustFragment extends Fragment {
 
         scroll_view = rootView.findViewById(R.id.scroll_view);
         ll_main = rootView.findViewById(R.id.ll_main);
+        delete_btn = rootView.findViewById(R.id.delete_btn);
         main_place = rootView.findViewById(R.id.main_place);
         main_level = rootView.findViewById(R.id.main_level);
         main_desc = rootView.findViewById(R.id.main_desc);
@@ -89,6 +93,9 @@ public class DustFragment extends Fragment {
         main_level.setText(dust_level > mdust_level
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
         main_place.setText(stationName);
+
+        delete_btn.setOnClickListener(v -> {
+        });
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
         bottom_layout.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));

@@ -118,19 +118,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private boolean mLocationPermissionGranted = false;
 
 	public static boolean getListFlag = false;
-
-	private int seq;
+	private int seq; // db에 리스트 id로 넣기 위한 seq
 
 	private FragmentContainerHelper mFramentContainerHelper;
 
-	// 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
-	private long backKeyPressedTime = 0;
-	// 첫 번째 뒤로가기 버튼을 누를때 표시
-	private Toast toast;
-
 	private static final String APP_CODE = "CAULY";	// 테스트용
 	//private static final String APP_CODE = "iR75C70S";	// 상용
-
 	private CaulyCloseAd mCloseAd;
 
 
@@ -299,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	private void getFragmentList() {
+
         Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
         RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
         for (int i = 0; i < airListRecord.size(); i++) {
@@ -636,6 +630,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	public void onShowedCloseAd(CaulyCloseAd ad, boolean isChargable) {
 
 	}
+
 }
 
 

@@ -52,5 +52,25 @@ public class CityRepository {
                     .findFirst();
         }
 
+        public static void deleteCityData(int id) {
+            Realm realm = Realm.getDefaultInstance();
+
+            try {
+                realm.beginTransaction();
+
+                realm.where(CityRecord.class)
+                        .equalTo("id", id)
+                        .findFirst();
+
+                realm.deleteAll();
+                realm.commitTransaction();
+            } catch (Exception e) {
+                e.printStackTrace();
+                realm.cancelTransaction();
+            } finally {
+                realm.close();
+            }
+        }
+
     }
 }
