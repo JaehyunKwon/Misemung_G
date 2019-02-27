@@ -14,6 +14,10 @@ android {
     }
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -22,6 +26,7 @@ android {
     repositories {
         maven { url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo' }
         maven { url 'https://jitpack.io' }
+        google()
         flatDir {
             dirs 'libs'
         }
@@ -47,13 +52,14 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
-    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    implementation files('libs/CaulySDK-3.4.23.jar')
 
     implementation 'io.realm:android-adapters:2.1.1'
     debugImplementation 'com.uphyca:stetho_realm:2.3.0'

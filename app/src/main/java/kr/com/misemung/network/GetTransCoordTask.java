@@ -7,7 +7,9 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import kr.com.misemung.realm.repository.CityRepository;
 import kr.com.misemung.ui.MainActivity;
+import kr.com.misemung.vo.CityInfo;
 import kr.com.misemung.vo.GeoInfo;
 
 /**
@@ -116,6 +118,13 @@ public class GetTransCoordTask {	// 스레드
         handler.post(() -> {
 
             active=false;
+
+			CityInfo info = new CityInfo();
+			info.setTmX(getX);
+			info.setTmY(getY);
+
+			// DB에 저장
+			CityRepository.City.set(addr, info);
 
             MainActivity.TransCoordThreadResponse(getX, getY, addr);
 
