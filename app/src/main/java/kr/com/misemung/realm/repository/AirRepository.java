@@ -2,6 +2,8 @@ package kr.com.misemung.realm.repository;
 
 
 
+import android.util.Log;
+
 import java.util.List;
 
 import io.realm.Realm;
@@ -12,22 +14,18 @@ import kr.com.misemung.vo.AirInfo;
 public class AirRepository {
 
     public static class Air {
-        public static void set(String stationName, AirInfo airInfo) {
+        public static void set(int id, String stationName, AirInfo airInfo) {
             Realm realm = Realm.getDefaultInstance();
 
             try {
                 realm.beginTransaction();
 
-                Number nextID = (realm.where(AirRecord.class).max("id"));
-                if (nextID == null) {
-                    nextID = 1;
-                } else {
-                    nextID = nextID.intValue() + 1;
-                }
+                int nextID = id;
+                Log.d("AirRepository", "nextID ==> " + nextID);
 
                 AirRecord record = new AirRecord(airInfo);
                 record.stationName = stationName;
-                record.id = (int) nextID;
+                record.id = nextID;
 
                 realm.insertOrUpdate(record);
                 realm.commitTransaction();

@@ -245,13 +245,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				mSwipeRefreshLayout.setRefreshing(false);
 			}
 		} else {
-			AirRepository.Air.set(stationName, airInfo);
 
 			if (fragment_list.size() == 0) {
 				seq = 1;
 			} else {
 				seq = fragment_list.size()+1;
 			}
+			AirRepository.Air.set(seq, stationName, airInfo);
+
+			Log.i("MainActivity", "seq ==> " + seq);
 			getAddFragmentList(seq, stationName);
 		}
 
@@ -591,7 +593,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		if (record != null) {
 			stationName = record.umdName;
 			getNearStation(record.tmX, record.tmY);
-		}
+		} else {
+            if (mSwipeRefreshLayout.isRefreshing()) {
+                // 새로고침 완료
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }
 	}
 
 	@Override
