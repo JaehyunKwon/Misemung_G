@@ -256,39 +256,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
 		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
-		magicIndicator.setBackgroundColor(Color.WHITE);
-		CommonNavigator commonNavigator = new CommonNavigator(this);
-		commonNavigator.setScrollPivotX(0.35f);
-		commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-			@Override
-			public int getCount() {
-				return fragment_list.size();
-			}
 
-			@Override
-			public IPagerTitleView getTitleView(Context context, final int index) {
-				SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-				simplePagerTitleView.setText(stationList.get(index));
-				simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-				simplePagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
-				simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
-				setCurrentItem(viewPager, index);
-				return simplePagerTitleView;
-			}
-
-			@Override
-			public IPagerIndicator getIndicator(Context context) {
-				WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-				indicator.setFillColor(Color.parseColor("#9e9e9e"));
-				return indicator;
-			}
-		});
-		magicIndicator.setNavigator(commonNavigator);
-		ViewPagerHelper.bind(magicIndicator, viewPager);
-		mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
-		mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
-
-		loadingProgressBar.setVisibility(View.GONE);
+        setTabTitleIndicator();
 	}
 
 	private void getFragmentList() {
@@ -303,6 +272,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
         }
         Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
+
+        setTabTitleIndicator();
+
+	}
+
+    /**
+     * tab Indicator setting
+     * */
+    private void setTabTitleIndicator() {
         magicIndicator.setBackgroundColor(Color.WHITE);
         CommonNavigator commonNavigator = new CommonNavigator(this);
         commonNavigator.setScrollPivotX(0.35f);
@@ -335,10 +313,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
         mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
 
-		loadingProgressBar.setVisibility(View.GONE);
-	}
+        loadingProgressBar.setVisibility(View.GONE);
+    }
 
-	private void setCurrentItem(ViewPager viewPager, int index) {
+    private void setCurrentItem(ViewPager viewPager, int index) {
 		Log.i("MainActivity", "index ==> " + index);
 		viewPager.setCurrentItem(index);
 		HandlePreference.setFragmentListSize(index);
@@ -350,15 +328,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	 * */
 	public void getDeleteDustList(int id) {
 
+	    loadingProgressBar.setVisibility(View.VISIBLE);
+
+		Log.d("MainActivity", "delete_index ==> " + id);
 		AirRepository.Air.deleteDustData(id);
 		CityRepository.City.deleteCityData(id);
 
-		//adapter 새로고침
-		DustPagerAdapter adapter = (DustPagerAdapter) viewPager.getAdapter();
-		adapter.deletePage(viewPager.getCurrentItem());
+        stationList.remove(viewPager.getCurrentItem());
 
-		// 삭제 후 tab 갱신을 위해 페이지 재로딩
-		getFragmentList();
+        //adapter 새로고침
+        DustPagerAdapter adapter = (DustPagerAdapter) viewPager.getAdapter();
+        Objects.requireNonNull(adapter).deletePage(viewPager.getCurrentItem());
+
+        setTabTitleIndicator();
 
 		Toast.makeText(mContext, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
 
