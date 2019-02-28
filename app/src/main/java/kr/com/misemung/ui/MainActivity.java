@@ -2,6 +2,7 @@ package kr.com.misemung.ui;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +24,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -126,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private static final String APP_CODE = "iR75C70S";	// 상용
 	private CaulyCloseAd mCloseAd;
 
+	private GestureDetector mGestureDetector;
+	private boolean isLockOnHorizontialAxis;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -144,10 +150,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		mCloseAd.setAdInfo(closeAdInfo);
 		mCloseAd.setCloseAdListener(this);
 
+		mGestureDetector = new GestureDetector(mContext, new BaseUtil.XScrollDetector());
+
         initLayout();
 	}
 
 
+	@SuppressLint("ClickableViewAccessibility")
 	public void initLayout() {
 
 		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -185,6 +194,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		// 현재위치 검색 클릭
 		this_place.setText("현재위치");
 		this_place.setOnClickListener(this);
+
+		// 좌우 스와이프시 버벅거리는 현상 때문에 추가
+		viewPager.setOnTouchListener(viewpagerTouchListener);
 
 		// 아래로 드래그 후 새로고침
 		mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -458,9 +470,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 	/**
+	 * viewPager 좌우 스와이프 리스너
+	 */
+	View.OnTouchListener viewpagerTouchListener = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if (!isLockOnHorizontialAxis)
+				isLockOnHorizontialAxis = mGestureDetector.onTouchEvent(event);
+
+			if (event.getAction() == MotionEvent.ACTION_UP)
+				isLockOnHorizontialAxis = false;
+
+			if (isLockOnHorizontialAxis) {
+				mSwipeRefreshLayout.setEnabled(false);
+			} else if (!isLockOnHorizontialAxis) {
+				mSwipeRefreshLayout.setEnabled(true);
+			}
+			return false;
+		}
+	};
+
+	/**
 	 * 버튼에 대한 처리
 	 */
-
 	public void onClick(View v) {
 
 		switch (v.getId()) {
@@ -637,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	public void onShowedCloseAd(CaulyCloseAd ad, boolean isChargable) {
 
 	}
+
 }
 
 
