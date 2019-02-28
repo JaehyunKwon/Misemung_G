@@ -34,4 +34,13 @@ public class DustPagerAdapter extends FragmentStatePagerAdapter {
 
         return POSITION_NONE;
     }
+
+    // Delete a page at a `position`
+    public void deletePage(int position)
+    {
+        // Remove the corresponding item in the data set
+        fragmentList.remove(position);
+        // Notify the adapter that the data set is changed
+        notifyDataSetChanged();
+    }
 }

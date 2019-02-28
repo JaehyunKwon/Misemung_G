@@ -94,7 +94,9 @@ public class DustFragment extends Fragment {
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
         main_place.setText(stationName);
 
+        // delete 버튼 클릭시 리스트 삭제
         delete_btn.setOnClickListener(v -> {
+            ((MainActivity)MainActivity.mContext).getDeleteDustList(airRecord.id);
         });
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동

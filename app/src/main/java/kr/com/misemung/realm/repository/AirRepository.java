@@ -83,21 +83,11 @@ public class AirRepository {
         public static void deleteDustData(int id) {
             Realm realm = Realm.getDefaultInstance();
 
-            try {
-                realm.beginTransaction();
-
-                realm.where(AirRecord.class)
-                        .equalTo("id", id)
-                        .findFirst();
-
-                realm.deleteAll();
-                realm.commitTransaction();
-            } catch (Exception e) {
-                e.printStackTrace();
-                realm.cancelTransaction();
-            } finally {
-                realm.close();
-            }
+            realm.executeTransaction(realm1 -> {
+                RealmResults<AirRecord> result
+                        = realm1.where(AirRecord.class).equalTo("id", id).findAll();
+                result.deleteAllFromRealm();
+            });
         }
 
     }

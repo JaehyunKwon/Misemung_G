@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	private FragmentContainerHelper mFramentContainerHelper;
 
-	private static final String APP_CODE = "CAULY";	// 테스트용
-	//private static final String APP_CODE = "iR75C70S";	// 상용
+//	private static final String APP_CODE = "CAULY";	// 테스트용
+	private static final String APP_CODE = "iR75C70S";	// 상용
 	private CaulyCloseAd mCloseAd;
 
 
@@ -346,6 +346,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	/**
+	 * fragment에서 넘어온 값으로 리스트 삭제
+	 * */
+	public void getDeleteDustList(int id) {
+
+		AirRepository.Air.deleteDustData(id);
+		CityRepository.City.deleteCityData(id);
+
+		//adapter 새로고침
+		DustPagerAdapter adapter = (DustPagerAdapter) viewPager.getAdapter();
+		adapter.deletePage(viewPager.getCurrentItem());
+
+		// 삭제 후 tab 갱신을 위해 페이지 재로딩
+		getFragmentList();
+
+		Toast.makeText(mContext, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+
+	}
+
+	/**
 	 * 검색된 도시 API 조회
 	 * */
 	public void getSearchCityDust(String name) {    //대기정보를 가져오는 스레드
@@ -513,7 +532,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				.setCancelable(false)
 				.setPositiveButton("예",
 						(dialog, id) -> {
-                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            loadingProgressBar.setVisibility(View.GONE);
+							Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             intent.addCategory(Intent.CATEGORY_DEFAULT);
                             startActivity(intent);
                         })
@@ -570,7 +590,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			showCloseAd(null);
+			if (searchListView.getVisibility() == View.VISIBLE) {
+				searchListView.setVisibility(View.GONE);
+			} else {
+				// 카울리 종료 광고 팝업
+				showCloseAd(null);
+			}
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -630,7 +655,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	public void onShowedCloseAd(CaulyCloseAd ad, boolean isChargable) {
 
 	}
-
 }
 
 
