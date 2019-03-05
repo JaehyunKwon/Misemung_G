@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import kr.com.misemung.R;
 import kr.com.misemung.network.GetFindDustThread;
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		, SwipeRefreshLayout.OnRefreshListener
 		, CaulyCloseAdListener {
 
+
+	private final int GPS_RESULT_CODE = 1000;
 
 	private SwipeRefreshLayout mSwipeRefreshLayout;	// 아래로 드래그 후 새로고침하는 레이아웃
 
@@ -249,9 +253,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			if (fragment_list.size() == 0) {
 				seq = 1;
 			} else {
-				seq = fragment_list.size()+1;
+				Number id = AirRepository.Air.getId();
+				seq = (int) id;
 			}
-			AirRepository.Air.set(seq, stationName, airInfo);
+			AirRepository.Air.set(stationName, airInfo);
 
 			Log.i("MainActivity", "seq ==> " + seq);
 			getAddFragmentList(seq, stationName);
@@ -548,15 +553,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				.setCancelable(false)
 				.setPositiveButton("예",
 						(dialog, id) -> {
-                            loadingProgressBar.setVisibility(View.GONE);
 							Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             intent.addCategory(Intent.CATEGORY_DEFAULT);
-                            startActivity(intent);
+                            startActivityForResult(intent, GPS_RESULT_CODE);
                         })
 				.setNegativeButton("아니오",
 						(dialog, id) -> dialog.cancel());
 		AlertDialog alert = builder.create();
 		alert.show();
+
+		loadingProgressBar.setVisibility(View.GONE);
 	}
 
 
@@ -567,7 +573,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	@Override
 	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+		mGoogleApiClient.disconnect();
+		loadingProgressBar.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -677,6 +684,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode) {
+			case GPS_RESULT_CODE:
+				findGPS();
+				break;
+		}
+
+	}
 }
 
 

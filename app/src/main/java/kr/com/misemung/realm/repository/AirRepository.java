@@ -2,9 +2,6 @@ package kr.com.misemung.realm.repository;
 
 
 
-import android.util.Log;
-
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -14,18 +11,22 @@ import kr.com.misemung.vo.AirInfo;
 public class AirRepository {
 
     public static class Air {
-        public static void set(int id, String stationName, AirInfo airInfo) {
+        public static void set(String stationName, AirInfo airInfo) {
             Realm realm = Realm.getDefaultInstance();
 
             try {
                 realm.beginTransaction();
 
-                int nextID = id;
-                Log.d("AirRepository", "nextID ==> " + nextID);
+                Number nextID = (realm.where(AirRecord.class).max("id"));
+                if (nextID == null) {
+                    nextID = 1;
+                } else {
+                    nextID = nextID.intValue() + 1;
+                }
 
                 AirRecord record = new AirRecord(airInfo);
                 record.stationName = stationName;
-                record.id = nextID;
+                record.id = (int) nextID;
 
                 realm.insertOrUpdate(record);
                 realm.commitTransaction();
@@ -35,6 +36,18 @@ public class AirRepository {
             } finally {
                 realm.close();
             }
+        }
+
+        public static Number getId() {
+            Realm realm = Realm.getDefaultInstance();
+
+            Number nextID = (realm.where(AirRecord.class).max("id"));
+            if (nextID == null) {
+                nextID = 1;
+            } else {
+                nextID = nextID.intValue() + 1;
+            }
+            return nextID;
         }
 
         public static RealmResults<AirRecord> selectByAllList() {
