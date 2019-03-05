@@ -87,23 +87,15 @@ import kr.com.misemung.vo.CityInfo;
  *
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
-		, GoogleApiClient.OnConnectionFailedListener
-		, GoogleApiClient.ConnectionCallbacks
-		, SwipeRefreshLayout.OnRefreshListener
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
 		, CaulyCloseAdListener {
 
 
 	private static final int REQUEST_CODE_FINE_COARSE_PERMISSION = 10000;
-	private static final int GPS_RESULT_CODE = 1000;
 
 	private SwipeRefreshLayout mSwipeRefreshLayout;	// 아래로 드래그 후 새로고침하는 레이아웃
 
 	// GPS
-	/*private LocationManager locationManager;
-
-	private GoogleApiClient mGoogleApiClient;
-	private Location mLastLocation;*/
 	private FusedLocationProviderClient mFusedLocationClient;
 
 	private ProgressBar loadingProgressBar;
@@ -120,14 +112,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private EditText where;
 	private ListView searchListView;
 	private TextView searchNoData;
-	private Button this_place;
 	public static String stationName = "";
 
 	private String from = "WGS84";
 	private String to = "TM";
 	private static int stationCnt = 0;
 	public static Context mContext;    //static에서 context를 쓰기위해
-	private boolean mLocationPermissionGranted = false;
 
 	public static boolean getListFlag = false;
 	private int seq; // db에 리스트 id로 넣기 위한 seq
@@ -168,8 +158,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	@SuppressLint("ClickableViewAccessibility")
 	public void initLayout() {
 
-		//locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
 		mContext = this;    //static에서 context를 쓰기위해~
 
 		mSwipeRefreshLayout = findViewById(R.id.swipe_layout);
@@ -179,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		where = findViewById(R.id.where);
         searchListView = findViewById(R.id.search_list_view);
         searchNoData = findViewById(R.id.search_no_data);
-//		this_place = findViewById(R.id.this_place);
 
 		where.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 		where.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -194,16 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return false;
         });
-		/*mGoogleApiClient = new GoogleApiClient.Builder(this)    //google service
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(LocationServices.API)
-				.build();*/
 		mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-		// 현재위치 검색 클릭
-//		this_place.setText("현재위치");
-//		this_place.setOnClickListener(this);
 
 		// 좌우 스와이프시 버벅거리는 현상 때문에 추가
 		viewPager.setOnTouchListener(viewpagerTouchListener);
@@ -514,38 +492,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		}
 	};
 
-	/**
-	 * 버튼에 대한 처리
-	 */
-	public void onClick(View v) {
-
-		switch (v.getId()) {
-
-			/*case R.id.this_place:
-				loadingProgressBar.setVisibility(View.VISIBLE);
-				findGPS();
-
-				break;
-			default:
-				break;*/
-		}
-	}
-
-	/*private void findGPS() {
-
-		//GPS가 켜져있는지 체크
-		//켜져있지 않으면 설정으로 이동.
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			//GPS 설정화면으로 이동
-			alertCheckGPS();
-
-		}
-		//GPS 켜져있다면 위치 찾기.
-		else {
-			mGoogleApiClient.connect();
-		}
-	}*/
-
 	public void getLastKnownLocation() {
 		if (ActivityCompat.checkSelfPermission(this,
 				Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -569,55 +515,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				});
 	}
 
-	@Override
-	public void onConnected(Bundle bundle) {
-		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-				&& ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-			return;
-		}
-
-		/*mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-		if (mLastLocation != null) {
-			loadingProgressBar.setVisibility(View.GONE);
-			Log.d("mLastLocation", String.valueOf(mLastLocation.getLongitude()) + "," + mLastLocation.getLatitude());
-			getStation(String.valueOf(mLastLocation.getLongitude()), String.valueOf(mLastLocation.getLatitude()));
-		}
-
-		mGoogleApiClient.disconnect();*/
-
-	}
-
-	private void alertCheckGPS() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("GPS 기능이 필요합니다. 활성화 시키겠습니까?")
-				.setCancelable(false)
-				.setPositiveButton("예",
-						(dialog, id) -> {
-							Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                            intent.addCategory(Intent.CATEGORY_DEFAULT);
-                            startActivityForResult(intent, GPS_RESULT_CODE);
-                        })
-				.setNegativeButton("아니오",
-						(dialog, id) -> dialog.cancel());
-		AlertDialog alert = builder.create();
-		alert.show();
-
-		loadingProgressBar.setVisibility(View.GONE);
-	}
-
-
-	@Override
-	public void onConnectionSuspended(int i) {
-
-	}
-
-	@Override
-	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//		mGoogleApiClient.disconnect();
-		loadingProgressBar.setVisibility(View.GONE);
-	}
-
-	@Override
+		@Override
 	public void onPointerCaptureChanged(boolean hasCapture) {
 
 	}
@@ -724,17 +622,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		switch (requestCode) {
-			case GPS_RESULT_CODE:
-				//findGPS();
-				break;
-		}
-
-	}
 }
 
 
