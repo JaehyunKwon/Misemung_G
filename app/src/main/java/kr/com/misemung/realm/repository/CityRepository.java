@@ -20,7 +20,7 @@ public class CityRepository {
 
                 Number nextID = (realm.where(AirRecord.class).max("id"));
                 if (nextID == null) {
-                    nextID = 1;
+                    nextID = 2;
                 } else {
                     nextID = nextID.intValue() + 1;
                 }

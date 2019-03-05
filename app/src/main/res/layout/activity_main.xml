@@ -40,7 +40,7 @@
         android:textColor="#000000"
         android:visibility="gone"/>
 
-    <Button
+    <!--<Button
         android:id="@+id/this_place"
         android:layout_width="100.3dp"
         android:layout_height="34dp"
@@ -49,7 +49,7 @@
         android:layout_marginRight="5.3dp"
         android:layout_below="@+id/search_list_view"
         android:background="@drawable/rectangle_2_copy"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffffff"/>-->
 
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/magic_indicator"
@@ -57,15 +57,15 @@
         android:layout_height="40dp"
         android:layout_marginTop="13.3dp"
         android:layout_marginRight="21.3dp"
-        android:layout_below="@+id/search_list_view"
-        android:layout_toRightOf="@+id/this_place" />
+        android:layout_marginLeft="21.3dp"
+        android:layout_below="@+id/search_list_view" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16.7dp"
-        android:layout_below="@+id/this_place">
+        android:layout_below="@+id/magic_indicator">
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"

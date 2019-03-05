@@ -79,6 +79,16 @@ public class DustFragment extends Fragment {
         // 리스트 item Adapter
         adapter = new DustGridAdapter(getContext());
 
+        if (airRecord == null) {
+            airRecord = new AirRecord();
+            airRecord.pm10value = "-";
+            airRecord.pm25value = "-";
+            airRecord.so2value = "-";
+            airRecord.covalue = "-";
+            airRecord.o3value = "-";
+            airRecord.no2value = "-";
+        }
+
         adapter.addItem(new ListInfo("미세먼지", transDustGrade(airRecord.pm10value), airRecord.pm10value+ " ㎍/m³"));
         adapter.addItem(new ListInfo("초미세먼지", transMicroDustGrade(airRecord.pm25value), airRecord.pm25value+ " ㎍/m³"));
         adapter.addItem(new ListInfo("아황산가스", transSO2Grade(airRecord.so2value), airRecord.so2value+ " ppm"));

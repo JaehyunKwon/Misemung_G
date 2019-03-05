@@ -3,6 +3,7 @@ package kr.com.misemung.ui.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,9 @@ import kr.com.misemung.ui.DustFragment;
 
 public class DustPagerAdapter extends FragmentStatePagerAdapter {
 
-    private List<Fragment> fragmentList;
+    private List<Pair<Fragment, String>> fragmentList;
 
-    public DustPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragmentList) {
+    public DustPagerAdapter(FragmentManager fm, ArrayList<Pair<Fragment, String>> fragmentList) {
         super(fm);
         this.fragmentList = fragmentList;
     }
@@ -21,7 +22,7 @@ public class DustPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
 
-        return fragmentList.get(i);
+        return fragmentList.get(i).first;
     }
 
     @Override

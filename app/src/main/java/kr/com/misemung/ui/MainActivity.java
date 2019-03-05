@@ -25,6 +25,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -43,7 +44,9 @@ import com.fsn.cauly.CaulyCloseAd;
 import com.fsn.cauly.CaulyCloseAdListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import net.lucode.hackware.magicindicator.FragmentContainerHelper;
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -91,21 +94,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		, CaulyCloseAdListener {
 
 
-	private final int GPS_RESULT_CODE = 1000;
+	private static final int REQUEST_CODE_FINE_COARSE_PERMISSION = 10000;
+	private static final int GPS_RESULT_CODE = 1000;
 
 	private SwipeRefreshLayout mSwipeRefreshLayout;	// 아래로 드래그 후 새로고침하는 레이아웃
 
 	// GPS
-	private LocationManager locationManager;
+	/*private LocationManager locationManager;
 
 	private GoogleApiClient mGoogleApiClient;
-	private Location mLastLocation;
+	private Location mLastLocation;*/
+	private FusedLocationProviderClient mFusedLocationClient;
 
 	private ProgressBar loadingProgressBar;
 
 	private MagicIndicator magicIndicator;
 
-	private ArrayList<Fragment> fragment_list = new ArrayList<>(); // 프레그먼트 arraylist
+	private ArrayList<Pair<Fragment, String>> fragment_list = new ArrayList<>(); // 프레그먼트 arraylist
 	private ArrayList<String> stationList = new ArrayList<>(); // 탭 title arraylist
 	private ArrayList<String> stationArrList; // 배열을 저장하는 arraylist
 	private ViewPager viewPager;
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	@SuppressLint("ClickableViewAccessibility")
 	public void initLayout() {
 
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		//locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 		mContext = this;    //static에서 context를 쓰기위해~
 
@@ -174,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		where = findViewById(R.id.where);
         searchListView = findViewById(R.id.search_list_view);
         searchNoData = findViewById(R.id.search_no_data);
-		this_place = findViewById(R.id.this_place);
+//		this_place = findViewById(R.id.this_place);
 
 		where.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 		where.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -189,15 +194,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return false;
         });
-		mGoogleApiClient = new GoogleApiClient.Builder(this)    //google service
+		/*mGoogleApiClient = new GoogleApiClient.Builder(this)    //google service
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this)
 				.addApi(LocationServices.API)
-				.build();
+				.build();*/
+		mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 		// 현재위치 검색 클릭
-		this_place.setText("현재위치");
-		this_place.setOnClickListener(this);
+//		this_place.setText("현재위치");
+//		this_place.setOnClickListener(this);
 
 		// 좌우 스와이프시 버벅거리는 현상 때문에 추가
 		viewPager.setOnTouchListener(viewpagerTouchListener);
@@ -205,7 +211,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		// 아래로 드래그 후 새로고침
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        getFragmentList();
+		getLastKnownLocation();
+
+		loadAllList();
 
 	}
 
@@ -259,37 +267,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			AirRepository.Air.set(stationName, airInfo);
 
 			Log.i("MainActivity", "seq ==> " + seq);
-			getAddFragmentList(seq, stationName);
+			addFragmentList(seq, stationName);
 		}
 
 		GetFindDustThread.active = false;
 		GetFindDustThread.interrupted();
 	}
 
-	private void getAddFragmentList(int id, String umdName) {
+	private void addFragmentList(int id, String umdName) {
 
 		Log.w("MainActivity", "id ==> " + id);
 		AirRecord airRecord = AirRepository.Air.selectByDustData(id, umdName);
-		fragment_list.add(new DustFragment(airRecord, airRecord.stationName));
-		stationList.add(airRecord.stationName);
-
+		fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
 		Log.w("MainActivity", "fragment_list ==> " + fragment_list.size());
-		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
 
-        setTabTitleIndicator();
+		Objects.requireNonNull(viewPager.getAdapter()).notifyDataSetChanged();
+
+		loadAllList();
+
 	}
 
-	private void getFragmentList() {
+	private void loadAllList() {
 
         Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
+
+        // 초기화
+        fragment_list = new ArrayList<>();
+		stationList = new ArrayList<>();
+
         RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
-        for (int i = 0; i < airListRecord.size(); i++) {
-            AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
+		fragment_list.add(new Pair<>(new DustFragment(), "현재위치"));
+		stationList.add(0,"현재위치");
+
+		for (int i = 0; i < airListRecord.size(); i++) {
+			AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
 
 			stationList.add(airRecord.stationName);
-            fragment_list.add(new DustFragment(airRecord, airRecord.stationName));
-            viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+			fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
         }
+
+        viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
         Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
 
         setTabTitleIndicator();
@@ -504,17 +521,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		switch (v.getId()) {
 
-			case R.id.this_place:
+			/*case R.id.this_place:
 				loadingProgressBar.setVisibility(View.VISIBLE);
 				findGPS();
 
 				break;
 			default:
-				break;
+				break;*/
 		}
 	}
 
-	private void findGPS() {
+	/*private void findGPS() {
 
 		//GPS가 켜져있는지 체크
 		//켜져있지 않으면 설정으로 이동.
@@ -527,6 +544,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		else {
 			mGoogleApiClient.connect();
 		}
+	}*/
+
+	public void getLastKnownLocation() {
+		if (ActivityCompat.checkSelfPermission(this,
+				Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+				&& ActivityCompat.checkSelfPermission(this,
+				Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			// 권한 요청
+			ActivityCompat.requestPermissions(this,
+					new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+					REQUEST_CODE_FINE_COARSE_PERMISSION);
+			return;
+		}
+
+		mFusedLocationClient.getLastLocation()
+				.addOnSuccessListener(this, location -> {
+					// Got last known location. In some rare situations this can be null.
+					if (location != null) {
+						AirRecord re = AirRepository.Air.selectByDustData(1, "현재위치");
+
+						getStation(String.valueOf(location.getLongitude()), String.valueOf(location.getLatitude()));
+					}
+				});
 	}
 
 	@Override
@@ -536,14 +576,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			return;
 		}
 
-		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+		/*mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 		if (mLastLocation != null) {
 			loadingProgressBar.setVisibility(View.GONE);
 			Log.d("mLastLocation", String.valueOf(mLastLocation.getLongitude()) + "," + mLastLocation.getLatitude());
 			getStation(String.valueOf(mLastLocation.getLongitude()), String.valueOf(mLastLocation.getLatitude()));
 		}
 
-		mGoogleApiClient.disconnect();
+		mGoogleApiClient.disconnect();*/
 
 	}
 
@@ -573,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 	@Override
 	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-		mGoogleApiClient.disconnect();
+//		mGoogleApiClient.disconnect();
 		loadingProgressBar.setVisibility(View.GONE);
 	}
 
@@ -644,8 +684,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	private void showDefaultClosePopup() {
-		new AlertDialog.Builder(this).setTitle("").setMessage("종료 하시겠습니까?")
-				.setPositiveButton("예", (dialog, which) -> finish()).setNegativeButton("아니오", null).show();
+		new AlertDialog.Builder(this).setTitle("").setMessage("종료하시겠습니까?")
+				.setPositiveButton("확인", (dialog, which) -> finish()).setNegativeButton("취소", null).show();
 	}
 
 	// CaulyCloseAdListener
@@ -690,7 +730,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		switch (requestCode) {
 			case GPS_RESULT_CODE:
-				findGPS();
+				//findGPS();
 				break;
 		}
 
