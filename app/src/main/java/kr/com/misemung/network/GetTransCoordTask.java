@@ -119,13 +119,6 @@ public class GetTransCoordTask {	// 스레드
 
             active=false;
 
-			CityInfo info = new CityInfo();
-			info.setTmX(getX);
-			info.setTmY(getY);
-
-			// DB에 저장
-			CityRepository.City.set(addr, info);
-
             MainActivity.TransCoordThreadResponse(getX, getY, addr);
 
         });

@@ -38,6 +38,26 @@ public class AirRepository {
             }
         }
 
+        public static void setCurrent(int id, String stationName, AirInfo airInfo) {
+            Realm realm = Realm.getDefaultInstance();
+
+            try {
+                realm.beginTransaction();
+
+                AirRecord record = new AirRecord(airInfo);
+                record.stationName = stationName;
+                record.id = id;
+
+                realm.insertOrUpdate(record);
+                realm.commitTransaction();
+            } catch (Exception e) {
+                e.printStackTrace();
+                realm.cancelTransaction();
+            } finally {
+                realm.close();
+            }
+        }
+
         public static Number getId() {
             Realm realm = Realm.getDefaultInstance();
 

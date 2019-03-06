@@ -120,16 +120,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	public static Context mContext;    //static에서 context를 쓰기위해
 
 	public static boolean getListFlag = false;
+	public static boolean gpsListFlag = false;
 	private int seq; // db에 리스트 id로 넣기 위한 seq
 
 	private FragmentContainerHelper mFramentContainerHelper;
 
-//	private static final String APP_CODE = "CAULY";	// 테스트용
+	//	private static final String APP_CODE = "CAULY";	// 테스트용
 	private static final String APP_CODE = "iR75C70S";	// 상용
 	private CaulyCloseAd mCloseAd;
 
 	private GestureDetector mGestureDetector;
 	private boolean isLockOnHorizontialAxis;
+
+	private DustPresenter mPresenter;
 
 
 	@Override
@@ -151,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		mGestureDetector = new GestureDetector(mContext, new BaseUtil.XScrollDetector());
 
-        initLayout();
+		initLayout();
 	}
 
 
@@ -162,25 +165,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		mSwipeRefreshLayout = findViewById(R.id.swipe_layout);
 		loadingProgressBar = findViewById(R.id.loadingProgressBar);
-        magicIndicator = findViewById(R.id.magic_indicator);
+		magicIndicator = findViewById(R.id.magic_indicator);
 		viewPager = findViewById(R.id.viewpager);
 		where = findViewById(R.id.where);
-        searchListView = findViewById(R.id.search_list_view);
-        searchNoData = findViewById(R.id.search_no_data);
+		searchListView = findViewById(R.id.search_list_view);
+		searchNoData = findViewById(R.id.search_no_data);
 
 		where.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 		where.setInputType(InputType.TYPE_CLASS_TEXT);
 		where.setOnEditorActionListener((v, actionId, event) -> {
-            if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-                BaseUtil.hideSoftKeyboard(where);
-                where.clearFocus();
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                // API 호출
+			if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+				BaseUtil.hideSoftKeyboard(where);
+				where.clearFocus();
+				loadingProgressBar.setVisibility(View.VISIBLE);
+				// API 호출
 				getSearchCityDust(where.getText().toString());
-                return true;
-            }
-            return false;
-        });
+				return true;
+			}
+			return false;
+		});
 		mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 		// 좌우 스와이프시 버벅거리는 현상 때문에 추가
@@ -219,6 +222,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		// 데이터가 0 일때 다음 station으로 검색
 		if (stationCnt == 0) {
 			getFindDust(stationName);
+			return;
+		}
+
+		// GPS로 검색된 데이터
+		if (gpsListFlag) {
+			DustContract.View view = (DustContract.View) fragment_list.get(0).first;
+			view.reload(airInfo, stationName);
+			gpsListFlag = false;
 			return;
 		}
 
@@ -267,13 +278,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 	private void loadAllList() {
 
-        Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
+		Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
 
-        // 초기화
-        fragment_list = new ArrayList<>();
+		// 초기화
+		fragment_list = new ArrayList<>();
 		stationList = new ArrayList<>();
 
-        RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
+		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
 		fragment_list.add(new Pair<>(new DustFragment(), "현재위치"));
 		stationList.add(0,"현재위치");
 
@@ -282,55 +293,55 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 			stationList.add(airRecord.stationName);
 			fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
-        }
+		}
 
-        viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
-        Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
+		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
+		Log.w("MainActivity", "getFragmentList_fragment_list ==> " + fragment_list.size());
 
-        setTabTitleIndicator();
+		setTabTitleIndicator();
 
 	}
 
-    /**
-     * tab Indicator setting
-     * */
-    private void setTabTitleIndicator() {
-        magicIndicator.setBackgroundColor(Color.WHITE);
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setScrollPivotX(0.35f);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-            @Override
-            public int getCount() {
-                return fragment_list.size();
-            }
+	/**
+	 * tab Indicator setting
+	 * */
+	private void setTabTitleIndicator() {
+		magicIndicator.setBackgroundColor(Color.WHITE);
+		CommonNavigator commonNavigator = new CommonNavigator(this);
+		commonNavigator.setScrollPivotX(0.35f);
+		commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+			@Override
+			public int getCount() {
+				return fragment_list.size();
+			}
 
-            @Override
-            public IPagerTitleView getTitleView(Context context, final int index) {
-                SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
-                simplePagerTitleView.setText(stationList.get(index));
-                simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
-                simplePagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
-                simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
-                setCurrentItem(viewPager, index);
-                return simplePagerTitleView;
-            }
+			@Override
+			public IPagerTitleView getTitleView(Context context, final int index) {
+				SimplePagerTitleView simplePagerTitleView = new SimplePagerTitleView(context);
+				simplePagerTitleView.setText(stationList.get(index));
+				simplePagerTitleView.setNormalColor(Color.parseColor("#8e8e8e"));
+				simplePagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
+				simplePagerTitleView.setOnClickListener(v -> setCurrentItem(viewPager, index));
+				setCurrentItem(viewPager, index);
+				return simplePagerTitleView;
+			}
 
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                WrapPagerIndicator indicator = new WrapPagerIndicator(context);
-                indicator.setFillColor(Color.parseColor("#9e9e9e"));
-                return indicator;
-            }
-        });
-        magicIndicator.setNavigator(commonNavigator);
-        ViewPagerHelper.bind(magicIndicator, viewPager);
-        mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
-        mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
+			@Override
+			public IPagerIndicator getIndicator(Context context) {
+				WrapPagerIndicator indicator = new WrapPagerIndicator(context);
+				indicator.setFillColor(Color.parseColor("#9e9e9e"));
+				return indicator;
+			}
+		});
+		magicIndicator.setNavigator(commonNavigator);
+		ViewPagerHelper.bind(magicIndicator, viewPager);
+		mFramentContainerHelper = new FragmentContainerHelper(magicIndicator);
+		mFramentContainerHelper.handlePageSelected(HandlePreference.getFragmentListSize());
 
-        loadingProgressBar.setVisibility(View.GONE);
-    }
+		loadingProgressBar.setVisibility(View.GONE);
+	}
 
-    private void setCurrentItem(ViewPager viewPager, int index) {
+	private void setCurrentItem(ViewPager viewPager, int index) {
 		Log.i("MainActivity", "index ==> " + index);
 		viewPager.setCurrentItem(index);
 		HandlePreference.setFragmentListSize(index);
@@ -342,19 +353,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	 * */
 	public void getDeleteDustList(int id) {
 
-	    loadingProgressBar.setVisibility(View.VISIBLE);
+		loadingProgressBar.setVisibility(View.VISIBLE);
 
 		Log.d("MainActivity", "delete_index ==> " + id);
 		AirRepository.Air.deleteDustData(id);
 		CityRepository.City.deleteCityData(id);
 
-        stationList.remove(viewPager.getCurrentItem());
+		stationList.remove(viewPager.getCurrentItem());
 
-        //adapter 새로고침
-        DustPagerAdapter adapter = (DustPagerAdapter) viewPager.getAdapter();
-        Objects.requireNonNull(adapter).deletePage(viewPager.getCurrentItem());
+		//adapter 새로고침
+		DustPagerAdapter adapter = (DustPagerAdapter) viewPager.getAdapter();
+		Objects.requireNonNull(adapter).deletePage(viewPager.getCurrentItem());
 
-        setTabTitleIndicator();
+		setTabTitleIndicator();
 
 		Toast.makeText(mContext, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
 
@@ -508,14 +519,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 				.addOnSuccessListener(this, location -> {
 					// Got last known location. In some rare situations this can be null.
 					if (location != null) {
-						AirRecord re = AirRepository.Air.selectByDustData(1, "현재위치");
-
+						gpsListFlag = true;
 						getStation(String.valueOf(location.getLongitude()), String.valueOf(location.getLatitude()));
 					}
 				});
 	}
 
-		@Override
+	@Override
 	public void onPointerCaptureChanged(boolean hasCapture) {
 
 	}
@@ -539,11 +549,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			stationName = record.umdName;
 			getNearStation(record.tmX, record.tmY);
 		} else {
-            if (mSwipeRefreshLayout.isRefreshing()) {
-                // 새로고침 완료
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        }
+			if (mSwipeRefreshLayout.isRefreshing()) {
+				// 새로고침 완료
+				mSwipeRefreshLayout.setRefreshing(false);
+			}
+		}
 	}
 
 	@Override
