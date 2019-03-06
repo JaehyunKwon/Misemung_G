@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -60,7 +61,7 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
         private TextView item_title;
         private TextView item_level;
         private TextView item_value;
-        private ProgressBar item_progress;
+        private ImageView item_progress;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -77,11 +78,6 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
             item_level.setTextColor(context.getResources().getColor(transGradeBgColor(data.getLevel())));
             item_value.setText(data.getValue());
 
-            if (!data.getValue().contains("-")) {
-                String[] pro_val = data.getValue().split(" ");
-                double int_val = Float.parseFloat(pro_val[0]);
-                item_progress.setProgress((int) int_val);
-            }
         }
 
         public int transGradeBgColor(String strGrade) {
@@ -89,30 +85,39 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
             switch (strGrade) {
                 case "제일좋음":
                     trans = R.color.color_best_text;
+                    item_progress.setImageResource(R.drawable.best_gauge);
                     break;
                 case "좋음":
                     trans = R.color.color_so_good_text;
+                    item_progress.setImageResource(R.drawable.so_good_gauge);
                     break;
                 case "양호":
                     trans = R.color.color_good_text;
+                    item_progress.setImageResource(R.drawable.good_gauge);
                     break;
                 case "보통":
                     trans = R.color.color_normal_text;
+                    item_progress.setImageResource(R.drawable.normal_gauge);
                     break;
                 case "조심":
                     trans = R.color.color_careful_text;
+                    item_progress.setImageResource(R.drawable.careful_gauge);
                     break;
                 case "나쁨":
                     trans = R.color.color_bad_text;
+                    item_progress.setImageResource(R.drawable.bad_gauge);
                     break;
                 case "매우나쁨":
                     trans = R.color.color_so_bad_text;
+                    item_progress.setImageResource(R.drawable.so_bad_gauge);
                     break;
                 case "최악":
                     trans = R.color.color_worst_text;
+                    item_progress.setImageResource(R.drawable.worst_gauge);
                     break;
                 default:
                     trans = R.color.black;
+                    item_progress.setImageResource(R.drawable.worst_gauge);
                     break;
 
             }
