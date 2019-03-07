@@ -115,6 +115,10 @@ public class DustGridAdapter extends RecyclerView.Adapter<DustGridAdapter.ItemVi
                     trans = R.color.color_worst_text;
                     item_progress.setImageResource(R.drawable.worst_gauge);
                     break;
+                case "GPS OFF":
+                    trans = R.color.color_no_gps_text;
+                    item_progress.setImageResource(R.drawable.worst_gauge);
+                    break;
                 default:
                     trans = R.color.black;
                     item_progress.setImageResource(R.drawable.worst_gauge);

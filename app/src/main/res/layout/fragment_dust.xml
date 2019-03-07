@@ -17,14 +17,20 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/rectangle_best">
 
-            <ImageView
-                android:id="@+id/delete_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="26dp"
-                android:layout_marginRight="36dp"
-                android:background="@drawable/delete_btn"/>
+            <FrameLayout
+                android:id="@+id/delete_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/delete_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginRight="36dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/delete_btn"
+                    android:clickable="false"/>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/main_place"
@@ -32,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="7.3dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/delete_btn"
+                android:layout_below="@+id/delete_layout"
                 android:textSize="26sp"
                 android:textColor="#ffffff"
                 android:fontFamily="@font/scdreamfont"
@@ -72,20 +78,21 @@
                 android:layout_below="@+id/main_img"
                 android:gravity="center"/>
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15.8dp"
-                android:layout_marginBottom="38dp"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical">
+                android:layout_alignParentBottom="true">
                 <ImageView
                     android:id="@+id/position_bottom"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/position_bottom"/>
-            </LinearLayout>
+                    android:layout_marginTop="15.8dp"
+                    android:layout_marginBottom="38dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/position_bottom"
+                    android:clickable="false"/>
+            </FrameLayout>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView

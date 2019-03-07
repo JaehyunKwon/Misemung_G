@@ -19,6 +19,7 @@
     <color name="color_bad_text">#b43c25</color>
     <color name="color_so_bad_text">#9d2424</color>
     <color name="color_worst_text">#5b1c1c</color>
+    <color name="color_no_gps_text">#818181</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>

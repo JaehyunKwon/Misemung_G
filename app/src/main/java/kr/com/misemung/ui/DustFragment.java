@@ -1,6 +1,7 @@
 package kr.com.misemung.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,23 +21,25 @@ import android.widget.TextView;
 import java.util.Objects;
 
 import kr.com.misemung.R;
+import kr.com.misemung.common.CommonPopup;
 import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.ui.adapter.DustGridAdapter;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
+
+import static kr.com.misemung.common.CommonPopup.showConfirmCancelDialog;
 
 @SuppressLint("ValidFragment")
 public class DustFragment extends Fragment implements DustContract.View {
 
     private NestedScrollView scroll_view;
     private RelativeLayout ll_main;
-    private ImageView delete_btn;
+    private FrameLayout delete_layout;
     private TextView main_place;
     private TextView main_level;
     private TextView main_desc;
     private ImageView main_img;
-    private ImageView position_bottom;
-    private LinearLayout bottom_layout;
+    private FrameLayout bottom_layout;
 
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
@@ -48,6 +52,7 @@ public class DustFragment extends Fragment implements DustContract.View {
     private int mdust_level;
 
     private DustPresenter mPresenter;
+    private Dialog mDeleteDialog;
 
     public DustFragment() {}
 
@@ -62,13 +67,12 @@ public class DustFragment extends Fragment implements DustContract.View {
 
         scroll_view = rootView.findViewById(R.id.scroll_view);
         ll_main = rootView.findViewById(R.id.ll_main);
-        delete_btn = rootView.findViewById(R.id.delete_btn);
+        delete_layout = rootView.findViewById(R.id.delete_layout);
         main_place = rootView.findViewById(R.id.main_place);
         main_level = rootView.findViewById(R.id.main_level);
         main_desc = rootView.findViewById(R.id.main_desc);
         main_img = rootView.findViewById(R.id.main_img);
         bottom_layout = rootView.findViewById(R.id.bottom_layout);
-        position_bottom = rootView.findViewById(R.id.position_bottom);
         list_recyclerView = rootView.findViewById(R.id.list_recyclerView);
 
         // 리사이클 뷰 그리드뷰 형식으로 선언
@@ -83,12 +87,12 @@ public class DustFragment extends Fragment implements DustContract.View {
 
         if (airRecord == null) {
             airRecord = new AirRecord();
-            airRecord.pm10value = "-";
-            airRecord.pm25value = "-";
-            airRecord.so2value = "-";
-            airRecord.covalue = "-";
-            airRecord.o3value = "-";
-            airRecord.no2value = "-";
+            airRecord.pm10value = "?";
+            airRecord.pm25value = "?";
+            airRecord.so2value = "?";
+            airRecord.covalue = "?";
+            airRecord.o3value = "?";
+            airRecord.no2value = "?";
         }
 
         adapter.addItem(new ListInfo("미세먼지", transDustGrade(airRecord.pm10value), airRecord.pm10value+ " ㎍/m³"));
@@ -104,12 +108,25 @@ public class DustFragment extends Fragment implements DustContract.View {
         // 메인 레벨 (미세먼지 등급이 초미세먼지보다 안 좋을 경우 미세먼지 등급기준)
         main_level.setText(dust_level > mdust_level
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
-        main_place.setText(stationName);
+
+        if (!main_level.getText().equals("위치알못")) {
+            main_place.setText(stationName);
+            delete_layout.setVisibility(View.VISIBLE);
+        } else {
+            main_place.setText("주인님, 어디세요?");
+            main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
+            delete_layout.setVisibility(View.INVISIBLE);
+        }
 
         // delete 버튼 클릭시 리스트 삭제
-        delete_btn.setOnClickListener(v -> {
-            ((MainActivity)MainActivity.mContext).getDeleteDustList(airRecord.id);
-        });
+        delete_layout.setOnClickListener((View v) -> mDeleteDialog = CommonPopup.showConfirmCancelDialog(getContext(),
+                getString(R.string.noti_popup_title),
+                getString(R.string.delete_msg),
+                v1 -> {
+                    ((MainActivity)MainActivity.mContext).getDeleteDustList(airRecord.id);
+                    mDeleteDialog.dismiss();
+                },
+                v2 -> mDeleteDialog.dismiss()));
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
         bottom_layout.setOnClickListener(v -> scroll_view.smoothScrollTo(0, ll_main.getHeight()));
@@ -123,43 +140,48 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transDustGrade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            int grade = Integer.parseInt(stringGrade);
+            if (!stringGrade.contains("?")) {
+                int grade = Integer.parseInt(stringGrade);
 
-            if (grade <= 15) { // 제일좋음
-                dTrans = "제일좋음";
-                dust_level = 1;
+                if (grade <= 15) { // 제일좋음
+                    dTrans = "제일좋음";
+                    dust_level = 1;
 
-            } else if (grade <= 30) { // 좋음
-                dTrans = "좋음";
-                dust_level = 2;
+                } else if (grade <= 30) { // 좋음
+                    dTrans = "좋음";
+                    dust_level = 2;
 
-            } else if (grade <= 40) { // 양호
-                dTrans = "양호";
-                dust_level = 3;
+                } else if (grade <= 40) { // 양호
+                    dTrans = "양호";
+                    dust_level = 3;
 
-            } else if (grade <= 50) { // 보통
-                dTrans = "보통";
-                dust_level = 4;
+                } else if (grade <= 50) { // 보통
+                    dTrans = "보통";
+                    dust_level = 4;
 
-            } else if (grade <= 75) { // 조심
-                dTrans = "조심";
-                dust_level = 5;
+                } else if (grade <= 75) { // 조심
+                    dTrans = "조심";
+                    dust_level = 5;
 
-            } else if (grade <= 100) { // 나쁨
-                dTrans = "나쁨";
-                dust_level = 6;
+                } else if (grade <= 100) { // 나쁨
+                    dTrans = "나쁨";
+                    dust_level = 6;
 
-            } else if (grade <= 150) { // 매우나쁨
-                dTrans = "매우나쁨";
-                dust_level = 7;
+                } else if (grade <= 150) { // 매우나쁨
+                    dTrans = "매우나쁨";
+                    dust_level = 7;
 
-            } else if (grade > 151) { // 최악
-                dTrans = "최악";
-                dust_level = 8;
+                } else if (grade > 151) { // 최악
+                    dTrans = "최악";
+                    dust_level = 8;
 
+                } else {
+                    dTrans = "정보없음";
+                    dust_level = 0;
+                }
             } else {
-                dTrans = "정보없음";
-                dust_level = 0;
+                dTrans = "GPS OFF";
+                dust_level = -1;
             }
         } else {
             dTrans = "정보없음";
@@ -174,42 +196,48 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transMicroDustGrade(String microDust) {
         String mdTrans;
         if (!microDust.contains("-")) {
-            int grade = Integer.parseInt(microDust);
-            if (grade <= 8) { // 제일좋음
-                mdTrans = "제일좋음";
-                mdust_level = 1;
+            if (!microDust.contains("?")) {
+                int grade = Integer.parseInt(microDust);
 
-            } else if (grade <= 15) { // 좋음
-                mdTrans = "좋음";
-                mdust_level = 2;
+                if (grade <= 8) { // 제일좋음
+                    mdTrans = "제일좋음";
+                    mdust_level = 1;
 
-            } else if (grade <= 20) { // 양호
-                mdTrans = "양호";
-                mdust_level = 3;
+                } else if (grade <= 15) { // 좋음
+                    mdTrans = "좋음";
+                    mdust_level = 2;
 
-            } else if (grade <= 25) { // 보통
-                mdTrans = "보통";
-                mdust_level = 4;
+                } else if (grade <= 20) { // 양호
+                    mdTrans = "양호";
+                    mdust_level = 3;
 
-            } else if (grade <= 37) { // 조심
-                mdTrans = "조심";
-                mdust_level = 5;
+                } else if (grade <= 25) { // 보통
+                    mdTrans = "보통";
+                    mdust_level = 4;
 
-            } else if (grade <= 50) { // 나쁨
-                mdTrans = "나쁨";
-                mdust_level = 6;
+                } else if (grade <= 37) { // 조심
+                    mdTrans = "조심";
+                    mdust_level = 5;
 
-            } else if (grade <= 75) { // 매우나쁨
-                mdTrans = "매우나쁨";
-                mdust_level = 7;
+                } else if (grade <= 50) { // 나쁨
+                    mdTrans = "나쁨";
+                    mdust_level = 6;
 
-            } else if (grade > 76){ // 최악
-                mdTrans = "최악";
-                mdust_level = 8;
+                } else if (grade <= 75) { // 매우나쁨
+                    mdTrans = "매우나쁨";
+                    mdust_level = 7;
 
+                } else if (grade > 76) { // 최악
+                    mdTrans = "최악";
+                    mdust_level = 8;
+
+                } else {
+                    mdTrans = "정보없음";
+                    mdust_level = 0;
+                }
             } else {
-                mdTrans = "정보없음";
-                mdust_level = 0;
+                mdTrans = "GPS OFF";
+                mdust_level = -1;
             }
         } else {
             mdTrans = "정보없음";
@@ -225,26 +253,30 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transSO2Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            float grade = Float.parseFloat(stringGrade);
+            if (!stringGrade.contains("?")) {
+                float grade = Float.parseFloat(stringGrade);
 
-            if (grade <= 0.01) { // 제일좋음
-                dTrans = "제일좋음";
-            } else if (grade <= 0.02) { // 좋음
-                dTrans = "좋음";
-            } else if (grade <= 0.04) { // 양호
-                dTrans = "양호";
-            } else if (grade <= 0.05) { // 보통
-                dTrans = "보통";
-            } else if (grade <= 0.1) { // 조심
-                dTrans = "조심";
-            } else if (grade <= 0.15) { // 나쁨
-                dTrans = "나쁨";
-            } else if (grade <= 0.6) { // 매우나쁨
-                dTrans = "매우나쁨";
-            } else if (grade > 0.7) { // 최악
-                dTrans = "최악";
+                if (grade <= 0.01) { // 제일좋음
+                    dTrans = "제일좋음";
+                } else if (grade <= 0.02) { // 좋음
+                    dTrans = "좋음";
+                } else if (grade <= 0.04) { // 양호
+                    dTrans = "양호";
+                } else if (grade <= 0.05) { // 보통
+                    dTrans = "보통";
+                } else if (grade <= 0.1) { // 조심
+                    dTrans = "조심";
+                } else if (grade <= 0.15) { // 나쁨
+                    dTrans = "나쁨";
+                } else if (grade <= 0.6) { // 매우나쁨
+                    dTrans = "매우나쁨";
+                } else if (grade > 0.7) { // 최악
+                    dTrans = "최악";
+                } else {
+                    dTrans = "정보없음";
+                }
             } else {
-                dTrans = "정보없음";
+                dTrans = "GPS OFF";
             }
         } else {
             dTrans = "정보없음";
@@ -258,26 +290,30 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transCOGrade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            float grade = Float.parseFloat(stringGrade);
+            if (!stringGrade.contains("?")) {
+                float grade = Float.parseFloat(stringGrade);
 
-            if (grade <= 1) { // 제일좋음
-                dTrans = "제일좋음";
-            } else if (grade <= 2) { // 좋음
-                dTrans = "좋음";
-            } else if (grade <= 5.5) { // 양호
-                dTrans = "양호";
-            } else if (grade <= 9) { // 보통
-                dTrans = "보통";
-            } else if (grade <= 12) { // 조심
-                dTrans = "조심";
-            } else if (grade <= 15) { // 나쁨
-                dTrans = "나쁨";
-            } else if (grade <= 32) { // 매우나쁨
-                dTrans = "매우나쁨";
-            } else if (grade > 33) { // 최악
-                dTrans = "최악";
+                if (grade <= 1) { // 제일좋음
+                    dTrans = "제일좋음";
+                } else if (grade <= 2) { // 좋음
+                    dTrans = "좋음";
+                } else if (grade <= 5.5) { // 양호
+                    dTrans = "양호";
+                } else if (grade <= 9) { // 보통
+                    dTrans = "보통";
+                } else if (grade <= 12) { // 조심
+                    dTrans = "조심";
+                } else if (grade <= 15) { // 나쁨
+                    dTrans = "나쁨";
+                } else if (grade <= 32) { // 매우나쁨
+                    dTrans = "매우나쁨";
+                } else if (grade > 33) { // 최악
+                    dTrans = "최악";
+                } else {
+                    dTrans = "정보없음";
+                }
             } else {
-                dTrans = "정보없음";
+                dTrans = "GPS OFF";
             }
         } else {
             dTrans = "정보없음";
@@ -291,26 +327,30 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transO3Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            float grade = Float.parseFloat(stringGrade);
+            if (!stringGrade.contains("?")) {
+                float grade = Float.parseFloat(stringGrade);
 
-            if (grade <= 0.02) { // 제일좋음
-                dTrans = "제일좋음";
-            } else if (grade <= 0.03) { // 좋음
-                dTrans = "좋음";
-            } else if (grade <= 0.06) { // 양호
-                dTrans = "양호";
-            } else if (grade <= 0.09) { // 보통
-                dTrans = "보통";
-            } else if (grade <= 0.12) { // 조심
-                dTrans = "조심";
-            } else if (grade <= 0.15) { // 나쁨
-                dTrans = "나쁨";
-            } else if (grade <= 0.38) { // 매우나쁨
-                dTrans = "매우나쁨";
-            } else if (grade > 0.39) { // 최악
-                dTrans = "최악";
+                if (grade <= 0.02) { // 제일좋음
+                    dTrans = "제일좋음";
+                } else if (grade <= 0.03) { // 좋음
+                    dTrans = "좋음";
+                } else if (grade <= 0.06) { // 양호
+                    dTrans = "양호";
+                } else if (grade <= 0.09) { // 보통
+                    dTrans = "보통";
+                } else if (grade <= 0.12) { // 조심
+                    dTrans = "조심";
+                } else if (grade <= 0.15) { // 나쁨
+                    dTrans = "나쁨";
+                } else if (grade <= 0.38) { // 매우나쁨
+                    dTrans = "매우나쁨";
+                } else if (grade > 0.39) { // 최악
+                    dTrans = "최악";
+                } else {
+                    dTrans = "정보없음";
+                }
             } else {
-                dTrans = "정보없음";
+                dTrans = "GPS OFF";
             }
         } else {
             dTrans = "정보없음";
@@ -324,26 +364,30 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transNO2Grade(String stringGrade) {
         String dTrans;
         if (!stringGrade.contains("-")) {
-            float grade = Float.parseFloat(stringGrade);
+            if (!stringGrade.contains("?")) {
+                float grade = Float.parseFloat(stringGrade);
 
-            if (grade <= 0.02) { // 제일좋음
-                dTrans = "제일좋음";
-            } else if (grade <= 0.03) { // 좋음
-                dTrans = "좋음";
-            } else if (grade <= 0.05) { // 양호
-                dTrans = "양호";
-            } else if (grade <= 0.06) { // 보통
-                dTrans = "보통";
-            } else if (grade <= 0.13) { // 조심
-                dTrans = "조심";
-            } else if (grade <= 0.2) { // 나쁨
-                dTrans = "나쁨";
-            } else if (grade <= 1.1) { // 매우나쁨
-                dTrans = "매우나쁨";
-            } else if (grade > 1.2) { // 최악
-                dTrans = "최악";
+                if (grade <= 0.02) { // 제일좋음
+                    dTrans = "제일좋음";
+                } else if (grade <= 0.03) { // 좋음
+                    dTrans = "좋음";
+                } else if (grade <= 0.05) { // 양호
+                    dTrans = "양호";
+                } else if (grade <= 0.06) { // 보통
+                    dTrans = "보통";
+                } else if (grade <= 0.13) { // 조심
+                    dTrans = "조심";
+                } else if (grade <= 0.2) { // 나쁨
+                    dTrans = "나쁨";
+                } else if (grade <= 1.1) { // 매우나쁨
+                    dTrans = "매우나쁨";
+                } else if (grade > 1.2) { // 최악
+                    dTrans = "최악";
+                } else {
+                    dTrans = "정보없음";
+                }
             } else {
-                dTrans = "정보없음";
+                dTrans = "GPS OFF";
             }
         } else {
             dTrans = "정보없음";
@@ -357,6 +401,14 @@ public class DustFragment extends Fragment implements DustContract.View {
     public String transFinalGrade(int finalGrade) {
         String dTrans = "";
         switch (finalGrade) {
+            case -1:
+                dTrans = "위치알못";
+                main_level.setTextColor(getResources().getColor(R.color.color_no_gps_text));
+                ll_main.setBackgroundResource(R.drawable.rectangle_no_gps);
+                main_img.setImageResource(R.drawable.main_no_gps);
+                main_desc.setText(R.string.no_gps_desc);
+                main_desc.setTextColor(getResources().getColor(R.color.color_no_gps_text));
+                break;
             case 0:
                 dTrans = "정보없음";
                 main_desc.setText(R.string.default_desc);
@@ -438,7 +490,15 @@ public class DustFragment extends Fragment implements DustContract.View {
         // 메인 레벨 (미세먼지 등급이 초미세먼지보다 안 좋을 경우 미세먼지 등급기준)
         main_level.setText(dust_level > mdust_level
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
-        main_place.setText(name);
+
+        if (!main_level.getText().equals("위치알못")) {
+            main_place.setText(stationName);
+            delete_layout.setVisibility(View.VISIBLE);
+        } else {
+            main_place.setText("주인님, 어디세요?");
+            main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
+            delete_layout.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
