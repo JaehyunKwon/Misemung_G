@@ -451,7 +451,7 @@ public class DustFragment extends Fragment implements DustContract.View {
             case 6:
                 dTrans = "나쁨";
                 ll_main.setBackgroundResource(R.drawable.rectangle_bad);
-                main_img.setBackgroundResource(R.drawable.main_bad);
+                main_img.setImageResource(R.drawable.main_bad);
                 main_desc.setText(R.string.bad_desc);
                 break;
             case 7:
@@ -463,7 +463,7 @@ public class DustFragment extends Fragment implements DustContract.View {
             case 8:
                 dTrans = "최악";
                 ll_main.setBackgroundResource(R.drawable.rectangle_worst);
-                main_img.setBackgroundResource(R.drawable.main_worst);
+                main_img.setImageResource(R.drawable.main_worst);
                 main_desc.setText(R.string.worst_desc);
                 break;
         }
@@ -477,11 +477,6 @@ public class DustFragment extends Fragment implements DustContract.View {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             gridLayoutManager = new GridLayoutManager(getContext(), 2);
         }
-        // 그리드 뷰 구분선
-        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.HORIZONTAL));
-        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
         list_recyclerView.setLayoutManager(gridLayoutManager);
 
         // 리스트 item Adapter
