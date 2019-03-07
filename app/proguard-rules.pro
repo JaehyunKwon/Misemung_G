@@ -24,3 +24,36 @@
 	  	  public protected *;
 	}
 -dontwarn android.webkit.**
+
+-keepattributes *Annotation*
+
+-libraryjars libs
+
+-keepattributes EnclosingMethod
+
+-keep class com.crashlytics.** { *; }
+-keep class android.support.v4.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+
+# GSon
+-keep class com.google.gson.examples.android.model.** { *; }
+# Glide
+#-keep public class * implements com.bumptech.glide.module.GlideModule
+#-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+#    **[] $VALUES;
+#    public *;
+#}
+
+### OKHTTP3
+-keep class okhttp3.** { *; }
+
+# Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontnote okhttp3.internal.Platform
+
+-dontwarn org.apache.http.**
+-dontwarn udk.android.**
+-dontwarn org.junit.**
+-dontwarn android.test.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn android.support.v4.app.**
+-dontwarn net.lucode.hackware.**

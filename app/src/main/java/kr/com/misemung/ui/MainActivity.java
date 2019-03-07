@@ -132,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	private GestureDetector mGestureDetector;
 	private boolean isLockOnHorizontialAxis;
 
-	private DustPresenter mPresenter;
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -227,8 +225,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		// GPS로 검색된 데이터
 		if (gpsListFlag) {
+			loadAllList();
+
 			DustContract.View view = (DustContract.View) fragment_list.get(0).first;
 			view.reload(airInfo, stationName);
+
+			AirRepository.Air.setCurrent(1, stationName, airInfo);
 			gpsListFlag = false;
 			return;
 		}
@@ -284,10 +286,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		fragment_list = new ArrayList<>();
 		stationList = new ArrayList<>();
 
-		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
-		fragment_list.add(new Pair<>(new DustFragment(), "현재위치"));
-		stationList.add(0,"현재위치");
+		AirRecord gpsRecord = AirRepository.Air.selectByGPSData(1);
+		if (gpsRecord != null) {
+			fragment_list.add(new Pair<>(new DustFragment(gpsRecord, gpsRecord.stationName), "현재위치"));
+			stationList.add(0, "현재위치");
+		} else {
+			fragment_list.add(new Pair<>(new DustFragment(), "현재위치"));
+			stationList.add(0, "현재위치");
+		}
 
+		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
 		for (int i = 0; i < airListRecord.size(); i++) {
 			AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
 
@@ -396,6 +404,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			searchAdapter = new SearchAdapter(this, cityInfos);
 			searchListView.setAdapter(searchAdapter);
 		} else {
+			searchAdapter = new SearchAdapter(this, cityInfos);
+			searchListView.setAdapter(searchAdapter);
 			searchNoData.setVisibility(View.VISIBLE);
 		}
 
