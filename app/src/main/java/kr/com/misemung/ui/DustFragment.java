@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,7 +45,6 @@ public class DustFragment extends Fragment implements DustContract.View {
     private RecyclerView list_recyclerView;
     private DustGridAdapter adapter;
 
-    private AirInfo airInfo;
     private AirRecord airRecord;
     private String stationName;
 
@@ -80,6 +80,11 @@ public class DustFragment extends Fragment implements DustContract.View {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             gridLayoutManager = new GridLayoutManager(getContext(), 2);
         }
+        // 그리드 뷰 구분선
+        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.HORIZONTAL));
+        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
         list_recyclerView.setLayoutManager(gridLayoutManager);
 
         // 리스트 item Adapter
@@ -472,6 +477,11 @@ public class DustFragment extends Fragment implements DustContract.View {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             gridLayoutManager = new GridLayoutManager(getContext(), 2);
         }
+        // 그리드 뷰 구분선
+        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.HORIZONTAL));
+        list_recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
         list_recyclerView.setLayoutManager(gridLayoutManager);
 
         // 리스트 item Adapter
@@ -492,7 +502,10 @@ public class DustFragment extends Fragment implements DustContract.View {
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
 
         if (!main_level.getText().equals("위치알못")) {
-            main_place.setText(stationName);
+            main_level.setTextColor(getResources().getColor(R.color.white));
+            main_place.setText(name);
+            main_place.setTextColor(getResources().getColor(R.color.white));
+            main_desc.setTextColor(getResources().getColor(R.color.white));
             delete_layout.setVisibility(View.VISIBLE);
         } else {
             main_place.setText("주인님, 어디세요?");
