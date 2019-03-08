@@ -115,9 +115,12 @@ public class DustFragment extends Fragment implements DustContract.View {
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
 
         if (!main_level.getText().equals("위치알못")) {
+            main_place.setCompoundDrawablesWithIntrinsicBounds(R.drawable.group_2, 0, 0, 0);
+            main_place.setCompoundDrawablePadding(10);
             main_place.setText(stationName);
             delete_layout.setVisibility(View.VISIBLE);
         } else {
+            main_place.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             main_place.setText("주인님, 어디세요?");
             main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
             delete_layout.setVisibility(View.INVISIBLE);
@@ -498,11 +501,14 @@ public class DustFragment extends Fragment implements DustContract.View {
 
         if (!main_level.getText().equals("위치알못")) {
             main_level.setTextColor(getResources().getColor(R.color.white));
+            main_place.setCompoundDrawablesWithIntrinsicBounds(R.drawable.group_2, 0, 0, 0);
+            main_place.setCompoundDrawablePadding(10);
             main_place.setText(name);
             main_place.setTextColor(getResources().getColor(R.color.white));
             main_desc.setTextColor(getResources().getColor(R.color.white));
             delete_layout.setVisibility(View.VISIBLE);
         } else {
+            main_place.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             main_place.setText("주인님, 어디세요?");
             main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
             delete_layout.setVisibility(View.INVISIBLE);
