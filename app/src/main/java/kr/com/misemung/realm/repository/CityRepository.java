@@ -39,10 +39,24 @@ public class CityRepository {
             }
         }
 
-        public static RealmResults<CityRecord> selectByCityList() {
+        public static void setCurrentCity(int id, String umdName, CityInfo cityInfo) {
+            Realm realm = Realm.getDefaultInstance();
 
-            return Realm.getDefaultInstance().where(CityRecord.class)
-                    .findAll();
+            try {
+                realm.beginTransaction();
+
+                CityRecord record = new CityRecord(cityInfo);
+                record.umdName = umdName;
+                record.id = id;
+
+                realm.insertOrUpdate(record);
+                realm.commitTransaction();
+            } catch (Exception e) {
+                e.printStackTrace();
+                realm.cancelTransaction();
+            } finally {
+                realm.close();
+            }
         }
 
         public static CityRecord selectByCityData(int id) {
