@@ -12,7 +12,7 @@
         <RelativeLayout
             android:id="@+id/ll_main"
             android:layout_width="match_parent"
-            android:layout_height="504dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/rectangle_best">
@@ -23,11 +23,11 @@
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/delete_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp"
-                    android:layout_marginRight="36dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_gravity="right"
                     android:src="@drawable/delete_btn"
                     android:clickable="false"/>
@@ -52,8 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="33.3dp"
-                android:layout_centerInParent="true"
-                android:textSize="60.2sp"
+                android:layout_centerHorizontal="true"
+                android:textSize="60sp"
                 android:textColor="#ffffff"
                 android:text="제일좋음"
                 android:fontFamily="@font/scdreamfont"
@@ -64,14 +64,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_below="@+id/main_level"/>
+                android:layout_below="@+id/main_level"
+                android:src="@drawable/main_best"/>
 
             <TextView
                 android:id="@+id/main_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32.3dp"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:textSize="20sp"
                 android:textColor="#ffffff"
                 android:text="@string/best_desc"
@@ -89,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15.8dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="25dp"
                     android:layout_gravity="center"
                     android:src="@drawable/position_bottom"
                     android:clickable="false"/>
