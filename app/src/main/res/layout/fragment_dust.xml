@@ -104,6 +104,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="자료출처 : 한국환경공단(에어코리아)"
+            android:textSize="12sp"
+            android:textColor="@color/color_no_gps_text"
+            android:fontFamily="@font/scdreamfont"
+            android:layout_below="@+id/list_recyclerView"/>
+
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
