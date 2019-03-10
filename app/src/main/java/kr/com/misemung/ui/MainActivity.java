@@ -231,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			view.reload(airInfo, stationName);
 
 			AirRepository.Air.setCurrent(1, stationName, airInfo);
+			Toast.makeText(mContext, "현재위치가 갱신되었습니다.", Toast.LENGTH_SHORT).show();
 			gpsListFlag = false;
 			return;
 		}
