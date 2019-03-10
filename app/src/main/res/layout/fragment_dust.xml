@@ -61,8 +61,8 @@
                 android:id="@+id/main_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_below="@+id/main_level"
+                android:layout_centerHorizontal="true"
                 android:src="@drawable/main_best"/>
 
             <TextView
