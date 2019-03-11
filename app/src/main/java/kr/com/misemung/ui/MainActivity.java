@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +31,8 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	private EditText where;
 	private ListView searchListView;
 	private TextView searchNoData;
+	private TextView refresh_guide;
 	public static String stationName = "";
 
 	private String from = "WGS84";
@@ -168,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		where = findViewById(R.id.where);
 		searchListView = findViewById(R.id.search_list_view);
 		searchNoData = findViewById(R.id.search_no_data);
+		refresh_guide = findViewById(R.id.tv_refresh_guide);
 
 		where.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 		where.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -227,11 +232,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		if (gpsListFlag) {
 			loadAllList();
 
+			AirRepository.Air.setCurrent(1, stationName, airInfo);
+
 			DustContract.View view = (DustContract.View) fragment_list.get(0).first;
 			view.reload(airInfo, stationName);
 
-			AirRepository.Air.setCurrent(1, stationName, airInfo);
+			mFramentContainerHelper.handlePageSelected(0);
+			viewPager.setCurrentItem(0);
+
 			Toast.makeText(mContext, "현재위치가 갱신되었습니다.", Toast.LENGTH_SHORT).show();
+
 			gpsListFlag = false;
 			return;
 		}
@@ -297,11 +307,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		}
 
 		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
-		for (int i = 0; i < airListRecord.size(); i++) {
-			AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
+		if (airListRecord.size() > 0) {
+			fadeAnimation(refresh_guide, true);
+			for (int i = 0; i < airListRecord.size(); i++) {
+				AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
 
-			stationList.add(airRecord.stationName);
-			fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
+				stationList.add(airRecord.stationName);
+				fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
+			}
 		}
 
 		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));
@@ -538,6 +551,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 	@Override
 	public void onPointerCaptureChanged(boolean hasCapture) {
+
+	}
+
+	public void fadeAnimation(final View tv, boolean isfadeOut) {
+
+		final Animation animationFade;
+
+		tv.setAlpha(0f);
+
+		if (isfadeOut) {
+			animationFade = AnimationUtils.loadAnimation(mContext, R.anim.fadeout);
+		} else {
+			animationFade = AnimationUtils.loadAnimation(mContext, R.anim.fadein);
+		}
+
+		Handler mhandler = new Handler();
+		mhandler.postDelayed(() -> {
+
+            // TODO Auto-generated method stub
+            tv.setAlpha(1f);
+			animationFade.setAnimationListener(new Animation.AnimationListener()
+			{
+				public void onAnimationEnd(Animation animation)
+				{
+					tv.setVisibility(View.GONE);
+				}
+				public void onAnimationRepeat(Animation animation) {}
+				public void onAnimationStart(Animation animation) {}
+			});
+            tv.startAnimation(animationFade);
+        }, 0);
 
 	}
 

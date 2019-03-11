@@ -42,16 +42,18 @@
         android:textColor="#000000"
         android:visibility="gone"/>
 
-    <!--<Button
-        android:id="@+id/this_place"
-        android:layout_width="100.3dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="13.3dp"
-        android:layout_marginLeft="21.3dp"
-        android:layout_marginRight="5.3dp"
+    <TextView
+        android:id="@+id/tv_refresh_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/search_list_view"
-        android:background="@drawable/rectangle_2_copy"
-        android:textColor="#ffffff"/>-->
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/refresh_guide"
+        android:fontFamily="@font/scdreamfont"
+        android:textSize="13sp"
+        android:textColor="#000000"
+        android:visibility="visible"/>
 
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/magic_indicator"
@@ -60,7 +62,7 @@
         android:layout_marginTop="13.3dp"
         android:layout_marginRight="21.3dp"
         android:layout_marginLeft="21.3dp"
-        android:layout_below="@+id/search_list_view" />
+        android:layout_below="@+id/tv_refresh_guide" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_layout"
