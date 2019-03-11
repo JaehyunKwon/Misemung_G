@@ -231,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		// GPS로 검색된 데이터
 		if (gpsListFlag) {
 			loadAllList(false);
+			refresh_guide.setVisibility(View.GONE);
 
 			AirRepository.Air.setCurrent(1, stationName, airInfo);
 
