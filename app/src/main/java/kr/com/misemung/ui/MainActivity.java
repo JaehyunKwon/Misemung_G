@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		getLastKnownLocation();
 
-		loadAllList();
+		loadAllList(true);
 
 	}
 
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		// GPS로 검색된 데이터
 		if (gpsListFlag) {
-			loadAllList();
+			loadAllList(false);
 
 			AirRepository.Air.setCurrent(1, stationName, airInfo);
 
@@ -285,11 +285,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		Objects.requireNonNull(viewPager.getAdapter()).notifyDataSetChanged();
 
-		loadAllList();
+		loadAllList(false);
 
 	}
 
-	private void loadAllList() {
+	private void loadAllList(boolean fadeAnim) {
 
 		Log.i("MainActivity","getFragmentList_stationName :: "+ stationName);
 
@@ -308,13 +308,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		RealmResults<AirRecord> airListRecord = AirRepository.Air.selectByAllList();
 		if (airListRecord.size() > 0) {
-			fadeAnimation(refresh_guide, true);
+			fadeAnimation(refresh_guide, fadeAnim);
+
 			for (int i = 0; i < airListRecord.size(); i++) {
 				AirRecord airRecord = AirRepository.Air.selectByDustData(airListRecord.get(i).id, airListRecord.get(i).stationName);
 
 				stationList.add(airRecord.stationName);
 				fragment_list.add(new Pair<>(new DustFragment(airRecord, airRecord.stationName), airRecord.stationName));
 			}
+		} else {
+			refresh_guide.setVisibility(View.GONE);
 		}
 
 		viewPager.setAdapter(new DustPagerAdapter(getSupportFragmentManager(), fragment_list));

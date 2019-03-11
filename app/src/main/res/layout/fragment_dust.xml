@@ -75,6 +75,7 @@
                 android:textColor="#ffffff"
                 android:text="@string/best_desc"
                 android:fontFamily="@font/scdreamfont"
+                android:lineSpacingExtra="5dp"
                 android:layout_below="@+id/main_img"
                 android:gravity="center"/>
 
@@ -88,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15.8dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_marginBottom="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/position_bottom"
                     android:clickable="false"/>
