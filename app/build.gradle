@@ -9,9 +9,9 @@ android {
 
     defaultConfig {
         applicationId "kr.com.misemung"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 28
-        versionCode 100
+        versionCode 101
         versionName "1.0.0"
     }
     buildTypes {
