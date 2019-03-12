@@ -92,6 +92,7 @@ public class DustFragment extends Fragment implements DustContract.View {
 
         if (airRecord == null) {
             airRecord = new AirRecord();
+            airRecord.id = 1;
             airRecord.pm10value = "?";
             airRecord.pm25value = "?";
             airRecord.so2value = "?";
@@ -114,16 +115,17 @@ public class DustFragment extends Fragment implements DustContract.View {
         main_level.setText(dust_level > mdust_level
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
 
-        if (!main_level.getText().equals("위치알못")) {
-            main_place.setCompoundDrawablesWithIntrinsicBounds(R.drawable.group_2, 0, 0, 0);
-            main_place.setCompoundDrawablePadding(10);
-            main_place.setText(stationName);
-            delete_layout.setVisibility(View.VISIBLE);
+        if (airRecord.id == 1) {
+            if (main_level.getText().equals("위치알못")) {
+                mainCardSetLayout("주인님, 어디세요?", true, false);
+
+            } else {
+                mainCardSetLayout(stationName, false, false);
+            }
+
         } else {
-            main_place.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            main_place.setText("주인님, 어디세요?");
-            main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
-            delete_layout.setVisibility(View.INVISIBLE);
+            mainCardSetLayout(stationName, false, true);
+
         }
 
         // delete 버튼 클릭시 리스트 삭제
@@ -499,18 +501,40 @@ public class DustFragment extends Fragment implements DustContract.View {
         main_level.setText(dust_level > mdust_level
                 ? transFinalGrade(dust_level) : transFinalGrade(mdust_level));
 
-        if (!main_level.getText().equals("위치알못")) {
+        if (airRecord.id == 1) {
+            if (main_level.getText().equals("위치알못")) {
+                mainCardSetLayout("주인님, 어디세요?", true, false);
+
+            } else {
+                mainCardSetLayout(name, false, false);
+            }
+
+        } else {
+            mainCardSetLayout(name, false, true);
+
+        }
+
+    }
+
+    private void mainCardSetLayout(String name, boolean isCurrent, boolean isVisible) {
+        if (isCurrent) {
+            main_place.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            main_place.setText("주인님, 어디세요?");
+            main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
+
+        } else {
             main_level.setTextColor(getResources().getColor(R.color.white));
             main_place.setCompoundDrawablesWithIntrinsicBounds(R.drawable.group_2, 0, 0, 0);
             main_place.setCompoundDrawablePadding(10);
             main_place.setText(name);
             main_place.setTextColor(getResources().getColor(R.color.white));
             main_desc.setTextColor(getResources().getColor(R.color.white));
+
+        }
+
+        if (isVisible) {
             delete_layout.setVisibility(View.VISIBLE);
         } else {
-            main_place.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            main_place.setText("주인님, 어디세요?");
-            main_place.setTextColor(getResources().getColor(R.color.color_no_gps_text));
             delete_layout.setVisibility(View.INVISIBLE);
         }
     }
