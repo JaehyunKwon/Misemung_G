@@ -42,7 +42,7 @@
                 android:layout_below="@+id/delete_layout"
                 android:textSize="26sp"
                 android:textColor="#ffffff"
-                android:fontFamily="@font/scdreamfont"
+                android:fontFamily="@font/scdream_font_4"
                 android:text=""/>
 
             <TextView
@@ -51,10 +51,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="33.3dp"
                 android:layout_centerHorizontal="true"
-                android:textSize="60sp"
+                android:textSize="64sp"
                 android:textColor="#ffffff"
                 android:text="제일좋음"
-                android:fontFamily="@font/scdreamfont"
+                android:fontFamily="@font/scdream_font_4"
                 android:layout_below="@+id/main_place"/>
 
             <ImageView
@@ -74,7 +74,7 @@
                 android:textSize="20sp"
                 android:textColor="#ffffff"
                 android:text="@string/best_desc"
-                android:fontFamily="@font/scdreamfont"
+                android:fontFamily="@font/scdream_font_5"
                 android:lineSpacingExtra="5dp"
                 android:layout_below="@+id/main_img"
                 android:gravity="center"/>
@@ -110,7 +110,7 @@
             android:text="자료출처 : 한국환경공단(에어코리아)"
             android:textSize="12sp"
             android:textColor="@color/color_no_gps_text"
-            android:fontFamily="@font/scdreamfont"
+            android:fontFamily="@font/scdream_font_5"
             android:layout_below="@+id/list_recyclerView"/>
 
     </RelativeLayout>

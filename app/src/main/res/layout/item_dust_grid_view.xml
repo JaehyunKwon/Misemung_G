@@ -16,7 +16,7 @@
             android:textSize="20sp"
             android:textColor="#818181"
             android:text="미세먼지"
-            android:fontFamily="@font/scdreamfont"
+            android:fontFamily="@font/scdream_font_5"
             />
         <TextView
             android:id="@+id/item_level"
@@ -28,7 +28,7 @@
             android:textSize="22sp"
             android:textColor="#2588e1"
             android:text="제일좋음"
-            android:fontFamily="@font/scdreamfont"
+            android:fontFamily="@font/scdream_font_5"
             />
         <ImageView
             android:id="@+id/item_progress"
@@ -49,7 +49,7 @@
             android:textColor="#818181"
             android:gravity="center_horizontal"
             android:text="74 ㎍/m³"
-            android:fontFamily="@font/scdreamfont"
+            android:fontFamily="@font/scdream_font_4"
             />
 
     </RelativeLayout>

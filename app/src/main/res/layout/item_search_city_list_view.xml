@@ -12,10 +12,10 @@
             android:id="@+id/item_umd_title"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:gravity="center"
             android:text=""
-            android:fontFamily="@font/scdreamfont"
+            android:fontFamily="@font/scdream_font_5"
             />
 
     </RelativeLayout>
