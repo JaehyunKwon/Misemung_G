@@ -11,7 +11,7 @@
     <string name="cancel">취소</string>
 
     <string name="noti_popup_title">알림</string>
-    <string name="network_error_msg">네트워크 상태가 불안정합니다.\n네트워크 연결을 확인해주세요.</string>
+    <string name="network_error_msg">네트워크 상태를 확인해주세요.</string>
 
     <string name="delete_msg">위치를 삭제할까요?</string>
 
