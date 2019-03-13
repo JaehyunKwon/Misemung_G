@@ -129,7 +129,7 @@ public class IntroActivity extends AppCompatActivity {
 
         }
 
-        CommonPopup.showConfirmDialog(this, getString(R.string.noti_popup_title), errMsg, view -> finish());
+        CommonPopup.showConfirmDialog(this, /*getString(R.string.noti_popup_title),*/ errMsg, view -> finish());
     }
 
     /**
@@ -148,7 +148,7 @@ public class IntroActivity extends AppCompatActivity {
      */
     private void showNetworkErrorPopup() {
         mNetworkErrorDialog = CommonPopup.showConfirmDialog(this,
-                getString(R.string.noti_popup_title),
+                //getString(R.string.noti_popup_title),
                 getString(R.string.network_error_msg),
                 view -> {
                     mNetworkErrorDialog.dismiss();

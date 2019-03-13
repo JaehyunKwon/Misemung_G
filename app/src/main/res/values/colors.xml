@@ -36,6 +36,8 @@
     <color name="color_365fdd">#365fdd</color>
     <color name="color_1f95ff">#1f95ff</color>
 
+    <color name="color_840909">#840909</color>
+
 
     <color name="colorCommonPopupBack">#FFFFFF</color>
     <color name="colorCommonPopupRedBtnBack">#FF442C</color>
@@ -44,6 +46,7 @@
     <color name="colorCommonPopupGrayBtnPress">#6E6E6E</color>
     <color name="colorCommonPopupBtnText">#FFFFFF</color>
     <color name="colorCommonPopupText">#212121</color>
+    <color name="colorCommonPopupMsg">#6c6c6c</color>
     <color name="colorCommonPopupLine">#E4E5E6</color>
 
     <color name="colorCommonRed">#FF442C</color>

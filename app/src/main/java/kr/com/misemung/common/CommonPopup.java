@@ -31,17 +31,17 @@ public class CommonPopup {
      * @param strAlert
      * @return
      */
-    public static Dialog makeConfirmDialog(Context context, String title, String strAlert, View.OnClickListener confirmListener){
+    public static Dialog makeConfirmDialog(Context context, String strAlert, View.OnClickListener confirmListener){
 
         final Dialog dialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
 
         LayoutInflater mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View insertView = mInflater.inflate(R.layout.popup_common_view, null);
 
-        TextView titleTv = insertView.findViewById(R.id.tv_title);
+        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         TextView messageTv = insertView.findViewById(R.id.tv_message);
 
-        titleTv.setText(title);
+        //titleTv.setText(title);
         messageTv.setText(strAlert);
 
         insertView.findViewById(R.id.btn_cancel).setVisibility(View.GONE);
@@ -62,17 +62,17 @@ public class CommonPopup {
      * @param strAlert
      * @return
      */
-    public static Dialog showConfirmDialog(Context context, String title, String strAlert, View.OnClickListener confirmListener){
+    public static Dialog showConfirmDialog(Context context, String strAlert, View.OnClickListener confirmListener){
 
         Dialog dialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
 
         LayoutInflater mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View insertView = mInflater.inflate(R.layout.popup_common_view, null);
 
-        TextView titleTv = insertView.findViewById(R.id.tv_title);
+        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         TextView messageTv = insertView.findViewById(R.id.tv_message);
 
-        titleTv.setText(title);
+        //titleTv.setText(title);
         messageTv.setText(strAlert);
 
         insertView.findViewById(R.id.btn_cancel).setVisibility(View.GONE);
@@ -94,17 +94,17 @@ public class CommonPopup {
      * @param strAlert
      * @return
      */
-    public static Dialog showConfirmCancelDialog(Context context, String title, String strAlert, View.OnClickListener confirmListener, View.OnClickListener cancelListener){
+    public static Dialog showConfirmCancelDialog(Context context, String strAlert, View.OnClickListener confirmListener, View.OnClickListener cancelListener){
 
         final Dialog dialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
 
         LayoutInflater mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View insertView = mInflater.inflate(R.layout.popup_common_view, null);
 
-        TextView titleTv = insertView.findViewById(R.id.tv_title);
+        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         TextView messageTv = insertView.findViewById(R.id.tv_message);
 
-        titleTv.setText(title);
+        //titleTv.setText(title);
         messageTv.setText(strAlert);
 
         TextView confirmBtn = insertView.findViewById(R.id.btn_confirm);
@@ -134,10 +134,10 @@ public class CommonPopup {
         LayoutInflater mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View insertView = mInflater.inflate(R.layout.popup_common_view, null);
 
-        TextView titleTv = insertView.findViewById(R.id.tv_title);
+        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         TextView messageTv = insertView.findViewById(R.id.tv_message);
 
-        titleTv.setText(title);
+        //titleTv.setText(title);
         messageTv.setText(strAlert);
 
         TextView confirmBtn = insertView.findViewById(R.id.btn_confirm);

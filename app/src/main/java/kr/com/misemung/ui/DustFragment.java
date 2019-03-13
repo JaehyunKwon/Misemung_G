@@ -14,12 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.util.Objects;
 
 import kr.com.misemung.R;
 import kr.com.misemung.common.CommonPopup;
@@ -27,8 +24,6 @@ import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.ui.adapter.DustGridAdapter;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.ListInfo;
-
-import static kr.com.misemung.common.CommonPopup.showConfirmCancelDialog;
 
 @SuppressLint("ValidFragment")
 public class DustFragment extends Fragment implements DustContract.View {
@@ -130,7 +125,7 @@ public class DustFragment extends Fragment implements DustContract.View {
 
         // delete 버튼 클릭시 리스트 삭제
         delete_layout.setOnClickListener((View v) -> mDeleteDialog = CommonPopup.showConfirmCancelDialog(getContext(),
-                getString(R.string.noti_popup_title),
+                //getString(R.string.noti_popup_title),
                 getString(R.string.delete_msg),
                 v1 -> {
                     ((MainActivity)MainActivity.mContext).getDeleteDustList(airRecord.id);

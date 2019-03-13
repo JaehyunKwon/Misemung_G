@@ -8,14 +8,14 @@
     android:gravity="center">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/common_popup_margin"
-        android:layout_marginRight="@dimen/common_popup_margin"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:background="@color/colorCommonPopupBack"
         android:orientation="vertical">
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -38,7 +38,7 @@
                 android:layout_height="2dp"
                 android:layout_marginTop="5dp"
                 android:background="@color/colorCommonPopupLine"/>
-        </LinearLayout>
+        </LinearLayout>-->
 
         <TextView
             android:id="@+id/tv_message"
@@ -50,8 +50,8 @@
             android:layout_marginBottom="20dp"
             android:gravity="center"
             android:lineSpacingExtra="8dp"
-            android:textColor="@color/colorCommonPopupText"
-            android:textSize="@dimen/common_popup_msg_size"
+            android:textColor="@color/colorCommonPopupMsg"
+            android:textSize="16sp"
             android:fontFamily="@font/scdream_font_4"/>
 
         <!-- bottom two button -->
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content">
 
             <View
-                android:background="@color/color_365fdd"
+                android:background="@color/color_progress_bgcolor"
                 android:layout_width="match_parent"
                 android:layout_height="2px"/>
 
@@ -74,16 +74,16 @@
                 <TextView
                     android:id="@+id/btn_cancel"
                     android:text="@string/cancel"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorCommonPopupText"
-                    android:fontFamily="@font/scdream_font_4"
+                    android:textSize="17sp"
+                    android:textColor="@color/colorCommonPopupMsg"
+                    android:fontFamily="@font/scdream_font_5"
                     android:gravity="center"
                     android:layout_weight="0.5"
                     android:layout_width="match_parent"
                     android:layout_height="42dp" />
 
                 <View
-                    android:background="@color/color_365fdd"
+                    android:background="@color/color_progress_bgcolor"
                     android:layout_width="2px"
                     android:layout_height="42dp"/>
 
@@ -91,9 +91,9 @@
                 <TextView
                     android:id="@+id/btn_confirm"
                     android:text="@string/confirm"
-                    android:textSize="12sp"
-                    android:textColor="@color/color_365fdd"
-                    android:fontFamily="@font/scdream_font_4"
+                    android:textSize="17sp"
+                    android:textColor="@color/color_840909"
+                    android:fontFamily="@font/scdream_font_5"
                     android:gravity="center"
                     android:layout_weight="0.5"
                     android:layout_width="match_parent"
