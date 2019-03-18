@@ -65,32 +65,31 @@
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/main_best"/>
 
-            <TextView
-                android:id="@+id/main_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
-                android:textColor="#ffffff"
-                android:text="@string/best_desc"
-                android:fontFamily="@font/scdream_font_5"
-                android:lineSpacingExtra="5dp"
-                android:layout_below="@+id/main_img"
-                android:gravity="center"/>
-
             <FrameLayout
                 android:id="@+id/bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true">
+                <TextView
+                    android:id="@+id/main_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="70dp"
+                    android:layout_gravity="center|top"
+                    android:textSize="20sp"
+                    android:textColor="#ffffff"
+                    android:text="@string/best_desc"
+                    android:fontFamily="@font/scdream_font_5"
+                    android:lineSpacingExtra="5dp"
+                    android:gravity="center"/>
+
                 <ImageView
                     android:id="@+id/position_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="27dp"
-                    android:layout_gravity="center"
+                    android:layout_marginBottom="35dp"
+                    android:layout_gravity="center|bottom"
                     android:src="@drawable/position_bottom"
                     android:clickable="false"/>
             </FrameLayout>
