@@ -27,7 +27,7 @@
                     android:layout_height="17dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginRight="30dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="15dp"
                     android:layout_gravity="right"
                     android:src="@drawable/delete_btn"
                     android:clickable="false"/>
@@ -43,7 +43,7 @@
                 android:textSize="26sp"
                 android:textColor="#ffffff"
                 android:fontFamily="@font/scdream_font_4"
-                android:text=""/>
+                android:text="경기도 고양시 덕양구 장항동"/>
 
             <TextView
                 android:id="@+id/main_level"
@@ -69,7 +69,7 @@
                 android:id="@+id/main_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32.3dp"
+                android:layout_marginTop="32dp"
                 android:layout_centerHorizontal="true"
                 android:textSize="20sp"
                 android:textColor="#ffffff"
@@ -88,8 +88,8 @@
                     android:id="@+id/position_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15.8dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="27dp"
                     android:layout_gravity="center"
                     android:src="@drawable/position_bottom"
                     android:clickable="false"/>
