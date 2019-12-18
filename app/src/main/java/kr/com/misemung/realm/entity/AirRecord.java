@@ -1,6 +1,6 @@
 package kr.com.misemung.realm.entity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.realm.RealmModel;
 import io.realm.annotations.PrimaryKey;

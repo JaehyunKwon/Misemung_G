@@ -1,11 +1,10 @@
 package kr.com.misemung.realm.entity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.realm.RealmModel;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
-import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.CityInfo;
 
 @RealmClass

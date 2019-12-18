@@ -9,28 +9,22 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmResults;
 import kr.com.misemung.R;
 import kr.com.misemung.common.CommonPopup;
-import kr.com.misemung.realm.entity.CityRecord;
-import kr.com.misemung.realm.repository.CityRepository;
 import kr.com.misemung.util.NetworkConnections;
-
-import static kr.com.misemung.ui.MainActivity.getNearStation;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -100,7 +94,7 @@ public class IntroActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
+                                           @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1000: {
