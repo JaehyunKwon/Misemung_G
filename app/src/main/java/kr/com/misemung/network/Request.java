@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
- * Created by JSW on 2017. 2. 16..
+ * Created by KJH on 2017. 3. 16..
  */
 
 public class Request {

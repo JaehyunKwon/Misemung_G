@@ -13,24 +13,24 @@ import kr.com.misemung.vo.CityInfo;
 import kr.com.misemung.vo.GeoInfo;
 
 /**
- * 변환된 좌표계를 가져오는 스레드
+ * GPS로 받은 위치를 가져오는 스레드
  *
  * @author kjh
  *
  */
 
-public class GetTransCoordTask {	// 스레드
+public class GetTranscoordTask {	// 스레드
 	static public boolean active = false;
-	Context context;
+	private Context context;
 	//파서용 변수
-	int data = 0;			//이건 파싱해서 array로 넣을때 번지
+	private int data = 0;			//이건 파싱해서 array로 넣을때 번지
 	public boolean isreceiver;
-	String getX,getY,addr;	//결과값
-	String gridx,gridy,coordfrom,coordto;
-	Handler handler;	//값 핸들러
-	String getInfo="v2/local/geo/coord2regioncode.json";
+	private String getX,getY,addr;	//결과값
+	private String gridx,gridy,coordfrom,coordto;
+	private Handler handler;	//값 핸들러
+	private String getInfo="v2/local/geo/coord2regioncode.json";
 
-	public GetTransCoordTask(Context context, boolean receiver, String x, String y, String from, String to){
+	public GetTranscoordTask(Context context, boolean receiver, String x, String y, String from, String to){
 
 		this.context = context;
 		handler = new Handler();

@@ -7,7 +7,7 @@ import java.util.List;
 import kr.com.misemung.vo.GeoInfo;
 
 /**
- * Created by JSW on 2017. 2. 16..
+ * Created by KJH on 2019. 3. 16..
  */
 
 public class Response {

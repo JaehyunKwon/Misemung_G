@@ -5,22 +5,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +24,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -45,11 +34,8 @@ import com.fsn.cauly.CaulyAdInfo;
 import com.fsn.cauly.CaulyAdInfoBuilder;
 import com.fsn.cauly.CaulyCloseAd;
 import com.fsn.cauly.CaulyCloseAdListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import net.lucode.hackware.magicindicator.FragmentContainerHelper;
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -65,13 +51,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
 import kr.com.misemung.R;
+import kr.com.misemung.network.GetAddressTask;
 import kr.com.misemung.network.GetFindDustThread;
 import kr.com.misemung.network.GetSearchCityListThread;
 import kr.com.misemung.network.GetStationListThread;
-import kr.com.misemung.network.GetTransCoordTask;
+import kr.com.misemung.network.GetTranscoordTask;
+import kr.com.misemung.network.GetTranscoordTmTask;
 import kr.com.misemung.realm.entity.AirRecord;
 import kr.com.misemung.realm.entity.CityRecord;
 import kr.com.misemung.realm.repository.AirRepository;
@@ -80,6 +67,7 @@ import kr.com.misemung.ui.adapter.DustPagerAdapter;
 import kr.com.misemung.ui.adapter.SearchAdapter;
 import kr.com.misemung.util.BaseUtil;
 import kr.com.misemung.util.HandlePreference;
+import kr.com.misemung.vo.AddrInfo;
 import kr.com.misemung.vo.AirInfo;
 import kr.com.misemung.vo.CityInfo;
 
@@ -220,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		stationCnt = 0;    //측정개수정보(여기선 1개만 가져온다
 		stationCnt = Integer.parseInt(airInfo.getTotalCount());
 
-		Log.w("MainActivity", "stationCnt :: " + String.valueOf(stationCnt));
+		Log.w("MainActivity", "stationCnt :: " + stationCnt);
 
 		// 데이터가 0 일때 다음 station으로 검색
 		if (stationCnt == 0) {
@@ -402,10 +390,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	 * */
 	public void getSearchCityDust(String name) {    //대기정보를 가져오는 스레드
 
-		GetSearchCityListThread.active = true;
+		/*GetSearchCityListThread.active = true;
 		GetSearchCityListThread getstationthread = new GetSearchCityListThread(false, name);        //스레드생성(UI 스레드사용시 system 뻗는다)
-		getstationthread.start();    //스레드 시작
+		getstationthread.start();    //스레드 시작*/
 
+		GetAddressTask.active = true;
+		new GetAddressTask(mContext, false, name);
 	}
 
 	/**
@@ -453,6 +443,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	}
 
 	/**
+	 * 위경도 -> TM 좌표계변환 API 조회
+	 * */
+	public void getTranscoord(String addr, String xGrid, String yGrid) {    //좌표계 변환
+
+		GetTranscoordTmTask.active = true;
+		new GetTranscoordTmTask(mContext, false, addr, xGrid, yGrid);        //스레드생성(UI 스레드사용시 system 뻗는다)
+
+	}
+
+	/**
 	 * 가까운 측정소 API 조회
 	 * */
 	public static void getNearStation(String xGrid, String yGrid) {    //이건 측정소 정보가져올 스레드
@@ -486,8 +486,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	public void getStation(String xGrid, String yGrid) {
 
 		if (xGrid != null && yGrid != null) {
-			GetTransCoordTask.active = true;
-			new GetTransCoordTask(mContext, false, xGrid, yGrid, from, to);        //스레드생성(UI 스레드사용시 system 뻗는다)
+			GetTranscoordTask.active = true;
+			new GetTranscoordTask(mContext, false, xGrid, yGrid, from, to);        //스레드생성(UI 스레드사용시 system 뻗는다)
 		} else {
 			Toast.makeText(mContext, "좌표값 잘못 되었습니다.", Toast.LENGTH_SHORT).show();
 		}
@@ -506,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			getNearStation(x, y);
 			getListFlag = false;
 		}
-		GetTransCoordTask.active = false;
+		GetTranscoordTask.active = false;
 	}
 
 
