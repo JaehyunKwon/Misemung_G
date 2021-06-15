@@ -53,6 +53,13 @@ android {
         mavenCentral()
         maven { url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo' }
         maven { url 'https://jitpack.io' }
+        maven {
+            url "s3://repo.cauly.net/releases"
+            credentials(AwsCredentials) {
+                accessKey "AKIAWRZUK5MFKYVSUOLB"
+                secretKey "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"
+            }
+        }
         google()
         flatDir {
             dirs 'libs'
@@ -91,7 +98,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
-    implementation files('libs/CaulySDK-3.5.02.jar')
+    //cauly SDK
+    implementation 'com.fsn.cauly:cauly-sdk:3.5.18'
 
     implementation 'io.realm:android-adapters:2.1.1'
     implementation 'io.realm:realm-transformer:10.0.1'
