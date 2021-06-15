@@ -1,31 +1,44 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "kr.com.misemung"
         minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 104
-        versionName "1.0.2"
+        targetSdkVersion 30
+        versionCode 105
+        versionName "1.0.3"
+        multiDexEnabled true
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", 'arm64-v8a'
+        }
     }
     buildTypes {
         release {
+            //signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'boolean', 'APP_DEBUG', 'false'
             lintOptions {
                 checkReleaseBuilds false
                 abortOnError false
             }
         }
+
         debug {
+//            signingConfig signingConfigs.release
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'boolean', 'APP_DEBUG', 'true'
         }
     }
     applicationVariants.all { variant ->
@@ -37,6 +50,7 @@ android {
     }
 
     repositories {
+        mavenCentral()
         maven { url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo' }
         maven { url 'https://jitpack.io' }
         google()
@@ -55,25 +69,33 @@ android {
         //아래의 코드는 kotlin extension 사용 시 추가
         //kotlinExtensionsEnabled = true
     }
+    buildFeatures {
+        // 뷰 바인딩 활성화
+        viewBinding true
+    }
 
 }
 
 dependencies {
     //implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
     implementation files('libs/CaulySDK-3.5.02.jar')
 
     implementation 'io.realm:android-adapters:2.1.1'
-    debugImplementation 'com.uphyca:stetho_realm:2.3.0'
+    implementation 'io.realm:realm-transformer:10.0.1'
+    //debugImplementation 'com.uphyca:stetho_realm:2.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
