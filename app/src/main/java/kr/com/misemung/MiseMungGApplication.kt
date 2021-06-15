@@ -33,6 +33,7 @@ class MiseMungGApplication : MultiDexApplication() {
             val newConfig = RealmConfiguration.Builder()
                 .name("misemung.realm")
                 .schemaVersion(1)
+                .allowWritesOnUiThread(true)
                 .deleteRealmIfMigrationNeeded()
                 .compactOnLaunch()
                 .build()
