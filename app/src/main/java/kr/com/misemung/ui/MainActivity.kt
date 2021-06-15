@@ -3,12 +3,18 @@ package kr.com.misemung.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import android.text.InputType
 import android.util.Log
 import android.util.Pair
@@ -20,8 +26,10 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import android.widget.TextView.OnEditorActionListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.viewpager.widget.ViewPager
@@ -32,6 +40,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import io.realm.exceptions.RealmException
 import kr.com.misemung.R
+import kr.com.misemung.common.CommonPopup
+import kr.com.misemung.common.Permission
 import kr.com.misemung.databinding.ActivityMainBinding
 import kr.com.misemung.network.*
 import kr.com.misemung.realm.repository.AirRepository.Air
@@ -61,11 +71,10 @@ import java.util.*
 class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListener {
 
     // GPS
+    private var locatioNManager: LocationManager? = null
     private var mFusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var fragmentList: ArrayList<Pair<Fragment, String?>> // 프레그먼트 arraylist
     private var stationList = ArrayList<String?>() // 탭 title arraylist
-    /*private var stationArrList // 배열을 저장하는 arraylist
-            = ArrayList<String?>()*/
     private var searchAdapter: SearchAdapter? = null
 
     private val from = "WGS84"
@@ -77,7 +86,10 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
     private var mGestureDetector: GestureDetector? = null
     private var isLockOnHorizontialAxis = false
 
+    private var alertDialog: Dialog? = null
+
     private lateinit var binding: ActivityMainBinding
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -122,8 +134,10 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
 
         // 아래로 드래그 후 새로고침
         binding.swipeLayout.setOnRefreshListener(this)
-        lastKnownLocation
-        loadAllList(true)
+
+        locatioNManager = (getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
+        getEnabled(locatioNManager!!)
+
     }
 
     /**
@@ -153,8 +167,8 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
         // GPS로 검색된 데이터
         if (gpsListFlag) {
             loadAllList(false)
-            binding.tvRefreshGuide.visibility = View.GONE
             Air.setCurrent(1, stationName, airInfo)
+            binding.tvRefreshGuide.visibility = View.GONE
             val view = fragmentList[0].first as DustContract.View
             view.reload(airInfo, stationName)
             mFramentContainerHelper!!.handlePageSelected(0)
@@ -175,12 +189,12 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
                 binding.swipeLayout.isRefreshing = false
             }
         } else {
-            seq = /*if (fragmentList.size == 0) {
-                1+1
-            } else ({
-                val id = Air.id
+            seq = if (fragmentList.size == 0) {
+                1
+            } else {
+                val id = Air.id as Int
                 id
-            }) as Int*/ Air.id as Int
+            }
             Air[stationName] = airInfo!!
             Log.i("MainActivity", "seq ==> $seq")
             addFragmentList(seq, stationName)
@@ -218,21 +232,28 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
 
             if (selectByAllList != null) {
                 fragmentList.add(Pair(DustFragment(selectByAllList, selectByAllList.stationName), "현재위치"))
+            } else {
+                fragmentList.add(Pair(DustFragment(null, null), "현재위치"))
             }
             stationList.add(0, "현재위치")
             val airListRecord = Air.selectByAllList()
             if (airListRecord.size > 0) {
                 fadeAnimation(binding.tvRefreshGuide, fadeAnim)
                 for (i in airListRecord.indices) {
-                    val airRecord =
-                        Air.selectByDustData(airListRecord[i]!!.id, airListRecord[i]!!.stationName)
-                    stationList.add(airRecord!!.stationName)
-                    fragmentList.add(
-                        Pair(
-                            DustFragment(airRecord, airRecord.stationName),
-                            airRecord.stationName
+                    if (airListRecord[i]!!.id != 1) {
+                        val airRecord =
+                            Air.selectByDustData(
+                                airListRecord[i]!!.id,
+                                airListRecord[i]!!.stationName
+                            )
+                        stationList.add(airRecord!!.stationName)
+                        fragmentList.add(
+                            Pair(
+                                DustFragment(airRecord, airRecord.stationName),
+                                airRecord.stationName
+                            )
                         )
-                    )
+                    }
                 }
             } else {
                 binding.tvRefreshGuide.visibility = View.GONE
@@ -305,8 +326,11 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
 
         //adapter 새로고침
         val adapter = binding.viewpager.adapter as DustPagerAdapter?
-        Objects.requireNonNull(adapter)!!.deletePage(binding.viewpager.currentItem)
+        val item = binding.viewpager.currentItem
+        Objects.requireNonNull(adapter)!!.deletePage(item)
+        Log.e("MainActivity", "currentItem ==> $item")
         setTabTitleIndicator()
+        loadAllList(false)
         Toast.makeText(mContext, "삭제되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
@@ -382,6 +406,66 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
     }
 
     /**
+     * GPS 활성 여부
+     * */
+    private fun getEnabled(locatioNManager: LocationManager) {
+        val gpsProvider = LocationManager.GPS_PROVIDER
+        val networkProvider = LocationManager.NETWORK_PROVIDER
+        // gps OFF 일 때
+        if (!locatioNManager.isProviderEnabled(gpsProvider)) {
+            alertDialog = CommonPopup.showConfirmCancelDialog(
+                this,
+                getString(R.string.gpsUse),
+                getString(R.string.gpsOn),
+                getString(R.string.cancel),
+                getString(R.string.confirm),
+                { view1: View? ->
+                    loadAllList(true)
+                    alertDialog!!.dismiss()
+                }) { view2: View? ->
+                // 위치정보 설정 Intent
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                alertDialog!!.dismiss()
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                locatioNManager.requestLocationUpdates(gpsProvider, 60000, 1.0f, locationListener)
+                locatioNManager.requestLocationUpdates(
+                    networkProvider,
+                    60000,
+                    1.0f,
+                    locationListener
+                )
+            }
+        }
+    }
+
+    /**
+     * LocationListener
+     * */
+    var locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            Log.d(
+                "MainActivity", "GPS Location changed, Latitude: $location.latitude" +
+                        ", Longitude: $location.longitude"
+            )
+            gpsListFlag = true
+            getStation(location.longitude.toString(), location.latitude.toString())
+        }
+
+        override fun onProviderDisabled(provider: String) {}
+        override fun onProviderEnabled(provider: String) {}
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+    }
+
+    /**
      * GPS 위치 받은 값으로 조회
      */
     private fun getStation(xGrid: String?, yGrid: String?) {
@@ -396,6 +480,7 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
     /**
      * viewPager 좌우 스와이프 리스너
      */
+    @SuppressLint("ClickableViewAccessibility")
     var viewpagerTouchListener = OnTouchListener { v, event ->
         if (!isLockOnHorizontialAxis) isLockOnHorizontialAxis =
             mGestureDetector!!.onTouchEvent(event)
@@ -408,38 +493,6 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
         false
     }// Got last known location. In some rare situations this can be null.
 
-    // 권한 요청
-    private val lastKnownLocation: Unit
-        get() {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // 권한 요청
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    REQUEST_CODE_FINE_COARSE_PERMISSION
-                )
-                return
-            }
-            mFusedLocationClient!!.lastLocation
-                .addOnSuccessListener(this) { location: Location? ->
-                    // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        gpsListFlag = true
-                        getStation(location.longitude.toString(), location.latitude.toString())
-                    }
-                }
-        }
 
     override fun onPointerCaptureChanged(hasCapture: Boolean) {}
     fun fadeAnimation(tv: View?, isfadeOut: Boolean) {
@@ -494,6 +547,11 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
     override fun onResume() {
         if (mCloseAd != null) mCloseAd!!.resume(this)
         super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locatioNManager?.removeUpdates(locationListener)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

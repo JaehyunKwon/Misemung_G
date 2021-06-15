@@ -3,12 +3,15 @@ package kr.com.misemung.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
@@ -17,11 +20,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kr.com.misemung.R
 import kr.com.misemung.common.CommonPopup
+import kr.com.misemung.common.Permission
 import kr.com.misemung.util.NetworkConnections
 import java.util.*
 
 class IntroActivity : AppCompatActivity() {
+    private val REQUEST_MANDATORY_PERMISSION = 51
+    private val RESULT_PERMISSION = 60
+
     private var mNetworkErrorDialog: Dialog? = null
+    private var mDialog: Dialog? = null
     private val HANDLER_INTRO_START = 0
     private var loadingProgressBar: ProgressBar? = null
 
@@ -36,91 +44,110 @@ class IntroActivity : AppCompatActivity() {
 
     private fun startIntro() {
         if (NetworkConnections.isConnected && NetworkConnections.isOnline) {
-            if (permission) {
+            if (Permission().hasMandatoryPermission(this)) {
                 // 2초 후 인트로 액티비티 제거
                 mIntroHandler = Handler()
                 mIntroHandler!!.postDelayed({ goNextActivity() }, 1000)
             } else {
                 // 퍼미션 요청
-                deviceLocation
+                requestPermission()
             }
         } else {
             showNetworkErrorPopup()
         }
     }
 
-    private val permission: Boolean
-        private get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.d("IntroActivity", "getPermission")
-            val checkPermissions = arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
+    /**
+     * 단말 permission 요청
+     */
+    private fun requestPermission() {
+        var count = 0
+        for (permission in Permission().PERMISSION_MANDATORY) {
+            val accessCoarseLocation = ContextCompat.checkSelfPermission(
+                this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            val locationPermission =
-                checkSelfPermission(checkPermissions[0]) == PackageManager.PERMISSION_GRANTED
-            val list: MutableList<String> = ArrayList()
-            if (!locationPermission) {
-                list.add(checkPermissions[0])
-            }
-            list.size <= 0
-        } else {
-            true
-        }
-    private val deviceLocation: Unit
-        private get() {
+            ) == PackageManager.PERMISSION_GRANTED
+
+            val accessFineLocation = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            Log.d("MainActivity", "accessCoarseLocation ==> $accessCoarseLocation")
+            Log.w("MainActivity", "accessFineLocation ==> $accessFineLocation")
+
+            // ACCESS_COARSE_LOCATION 권한이 true 이면, ACCESS_BACKGROUND_LOCATION 권한 PASS.
             if (ContextCompat.checkSelfPermission(
-                    this.applicationContext,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                == PackageManager.PERMISSION_GRANTED
-            ) {
-            } else {
-                ActivityCompat.requestPermissions(
                     this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    1000
-                )
-            }
-        }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            1000 -> {
-
-                // If request is cancelled, the result arrays are empty.
-                for (permission in permissions) {
-                    if (ContextCompat.checkSelfPermission(this, permission)
-                        == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        startIntro()
-                    } else {
-                        reCheckPermissions()
-                    }
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (accessCoarseLocation) {
+                    continue
+                } else {
+                    count++
                 }
             }
         }
+        if (count > 0) {
+            var index = 0
+            val strPermission = arrayOfNulls<String>(count)
+            for (permission in Permission().PERMISSION_MANDATORY) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        permission
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    strPermission[index] = permission
+                    index++
+                }
+            }
+            ActivityCompat.requestPermissions(
+                this,
+                strPermission,
+                REQUEST_MANDATORY_PERMISSION
+            )
+        } else {
+            startIntro()
+        }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun reCheckPermissions() {
-        // 권한 허용 체크
-        val locationPermission = (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-        var errMsg = ""
-        if (!locationPermission) {
-            errMsg = getString(R.string.location_permission_error)
+    /**
+     * 단말 permission 요청에 따른 응답 수신
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_MANDATORY_PERMISSION -> {
+                if (Permission().hasMandatoryPermission(this)) {
+                    startIntro()
+                } else {
+                    mDialog = CommonPopup.showConfirmCancelDialog(
+                        this,
+                        getString(R.string.alert_title),
+                        getString(R.string.alert_message),
+                        getString(R.string.alert_go_permission),
+                        getString(R.string.alert_finish),
+                        { view1: View? ->
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri = Uri.fromParts("package", packageName, null)
+                            intent.data = uri
+                            startActivityForResult(intent, RESULT_PERMISSION)
+                            mDialog!!.dismiss()
+                        }) { view2: View? ->
+                        mDialog!!.dismiss()
+                        finish()
+                    }
+                }
+                return
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
-        CommonPopup.showConfirmDialog(
-            this,  /*getString(R.string.noti_popup_title),*/
-            errMsg
-        ) { view: View? -> finish() }
     }
 
     /**

@@ -1,7 +1,9 @@
 package kr.com.misemung.common
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -80,22 +82,25 @@ object CommonPopup {
      * @return
      */
     fun showConfirmCancelDialog(
-        context: Context?,
+        context: Context,
+        title: String?,
         strAlert: String?,
+        confirmStr: String?,
+        cancelStr: String?,
         confirmListener: View.OnClickListener?,
         cancelListener: View.OnClickListener?
     ): Dialog {
-        val dialog = Dialog(context!!, android.R.style.Theme_Light_NoTitleBar)
+        val dialog = Dialog(context, android.R.style.Theme_Light_NoTitleBar)
         val mInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val insertView = mInflater.inflate(R.layout.popup_common_view, null)
 
-        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         val messageTv = insertView.findViewById<TextView>(R.id.tv_message)
 
-        //titleTv.setText(title);
         messageTv.text = strAlert
         val confirmBtn = insertView.findViewById<TextView>(R.id.btn_confirm)
         val cancelBtn = insertView.findViewById<TextView>(R.id.btn_cancel)
+        confirmBtn.text = confirmStr
+        cancelBtn.text = cancelStr
         confirmBtn.setOnClickListener(confirmListener)
         cancelBtn.setOnClickListener(cancelListener)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -113,9 +118,9 @@ object CommonPopup {
      */
     fun showConfirmCancelDialog(
         context: Context,
-        title: String?,
         strAlert: String?,
         confirmStr: String?,
+        cancelStr: String?,
         confirmListener: View.OnClickListener?,
         cancelListener: View.OnClickListener?
     ): Dialog {
@@ -123,14 +128,13 @@ object CommonPopup {
         val mInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val insertView = mInflater.inflate(R.layout.popup_common_view, null)
 
-        //TextView titleTv = insertView.findViewById(R.id.tv_title);
         val messageTv = insertView.findViewById<TextView>(R.id.tv_message)
 
-        //titleTv.setText(title);
         messageTv.text = strAlert
         val confirmBtn = insertView.findViewById<TextView>(R.id.btn_confirm)
         val cancelBtn = insertView.findViewById<TextView>(R.id.btn_cancel)
         confirmBtn.text = confirmStr
+        cancelBtn.text = cancelStr
         confirmBtn.setOnClickListener(confirmListener)
         cancelBtn.setOnClickListener(cancelListener)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
