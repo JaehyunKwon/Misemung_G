@@ -41,7 +41,7 @@ class DustFragment : Fragment, DustContract.View {
     private var mDeleteDialog: Dialog? = null
 
     constructor() {}
-    constructor(airRecord: AirRecord, stationName: String?) {
+    constructor(airRecord: AirRecord?, stationName: String?) {
         this.airRecord = airRecord
         this.stationName = stationName
     }
@@ -156,16 +156,20 @@ class DustFragment : Fragment, DustContract.View {
 
         // delete 버튼 클릭시 리스트 삭제
         delete_layout!!.setOnClickListener(View.OnClickListener { v: View? ->
-            mDeleteDialog = CommonPopup.showConfirmCancelDialog(
-                context,  //getString(R.string.noti_popup_title),
-                getString(R.string.delete_msg),
-                { v1: View? ->
-                    (MainActivity.Companion.mContext as MainActivity).getDeleteDustList(
-                        airRecord!!.id
-                    )
-                    mDeleteDialog!!.dismiss()
-                }
-            ) { v2: View? -> mDeleteDialog!!.dismiss() }
+            mDeleteDialog = context?.let {
+                CommonPopup.showConfirmCancelDialog(
+                    it,
+                    getString(R.string.delete_msg),
+                    getString(R.string.confirm),
+                    getString(R.string.cancel),
+                    { v1: View? ->
+                        (MainActivity.Companion.mContext as MainActivity).getDeleteDustList(
+                            airRecord!!.id
+                        )
+                        mDeleteDialog!!.dismiss()
+                    }
+                ) { v2: View? -> mDeleteDialog!!.dismiss() }
+            }
         })
 
         // 아래 자세히 보기 버튼 클릭시 스크롤 포지션 맨 마지막으로 이동
