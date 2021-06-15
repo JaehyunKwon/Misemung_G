@@ -16,6 +16,11 @@
     <string name="delete_msg">위치를 삭제할까요?</string>
 
     <string name="location_permission_error">위치 접근 권한이 없습니다. \n해당 권한이 있어야 미세멍지 이용이 가능합니다.</string>
+    <!-- 권한 팝업 -->
+    <string name="alert_title">알림</string>
+    <string name="alert_message">앱 실행의 필수 권한(위치정보)이 허용되지 않아 앱을 종료합니다.\n권한을 변경하시겠습니까?</string>
+    <string name="alert_go_permission">권한 다시 설정</string>
+    <string name="alert_finish">앱 종료</string>
 
     <string name="no_gps_desc">GPS기능을 켜주세요.\n미세멍지 대기중!</string>
     <string name="default_desc">측정 정보가 없어요!</string>
