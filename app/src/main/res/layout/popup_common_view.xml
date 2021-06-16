@@ -1,106 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPopupDim"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="138dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:background="@color/colorCommonPopupBack"
         android:orientation="vertical">
 
-        <!--<LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:gravity="center"
-                android:textColor="@color/colorCommonPopupText"
-                android:textSize="@dimen/common_popup_title_size"
-                android:fontFamily="@font/scdream_font_4"/>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/colorCommonPopupLine"/>
-        </LinearLayout>-->
-
         <TextView
             android:id="@+id/tv_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="34dp"
             android:layout_marginBottom="20dp"
+            android:layout_centerInParent="true"
             android:gravity="center"
             android:lineSpacingExtra="8dp"
             android:textColor="@color/colorCommonPopupMsg"
             android:textSize="16sp"
             android:fontFamily="@font/scdream_font_4"/>
+    </RelativeLayout>
 
-        <!-- bottom two button -->
-        <LinearLayout
-            android:orientation="vertical"
+    <!-- bottom two button -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorCommonPopupBack">
+
+        <View
+            android:background="@color/color_progress_bgcolor"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_height="2px"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- left btn -->
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:text="@string/cancel"
+                android:textSize="17sp"
+                android:textColor="@color/colorCommonPopupMsg"
+                android:fontFamily="@font/scdream_font_5"
+                android:gravity="center"
+                android:layout_weight="0.5"
+                android:layout_width="match_parent"
+                android:layout_height="62dp" />
 
             <View
                 android:background="@color/color_progress_bgcolor"
+                android:layout_width="2px"
+                android:layout_height="62dp"/>
+
+            <!-- right btn -->
+            <TextView
+                android:id="@+id/btn_confirm"
+                android:text="@string/confirm"
+                android:textSize="17sp"
+                android:textColor="@color/color_840909"
+                android:fontFamily="@font/scdream_font_5"
+                android:gravity="center"
+                android:layout_weight="0.5"
                 android:layout_width="match_parent"
-                android:layout_height="2px"/>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- left btn -->
-                <TextView
-                    android:id="@+id/btn_cancel"
-                    android:text="@string/cancel"
-                    android:textSize="17sp"
-                    android:textColor="@color/colorCommonPopupMsg"
-                    android:fontFamily="@font/scdream_font_5"
-                    android:gravity="center"
-                    android:layout_weight="0.5"
-                    android:layout_width="match_parent"
-                    android:layout_height="62dp" />
-
-                <View
-                    android:background="@color/color_progress_bgcolor"
-                    android:layout_width="2px"
-                    android:layout_height="62dp"/>
-
-                <!-- right btn -->
-                <TextView
-                    android:id="@+id/btn_confirm"
-                    android:text="@string/confirm"
-                    android:textSize="17sp"
-                    android:textColor="@color/color_840909"
-                    android:fontFamily="@font/scdream_font_5"
-                    android:gravity="center"
-                    android:layout_weight="0.5"
-                    android:layout_width="match_parent"
-                    android:layout_height="62dp" />
-            </LinearLayout>
-
+                android:layout_height="62dp" />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>
