@@ -130,10 +130,12 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // 좌우 스와이프시 버벅거리는 현상 때문에 추가
-        //6binding.viewpager.setOnTouchListener(viewpagerTouchListener)
+        binding.viewpager.setOnTouchListener(viewpagerTouchListener)
 
         // 아래로 드래그 후 새로고침
         binding.swipeLayout.setOnRefreshListener(this)
+
+        loadAllList(true)
 
         locatioNManager = (getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
         getEnabled(locatioNManager!!)
@@ -339,9 +341,6 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
      */
     private fun getSearchCityDust(name: String?) {    //대기정보를 가져오는 스레드
 
-        /*GetSearchCityListThread.active = true;
-		GetSearchCityListThread getstationthread = new GetSearchCityListThread(false, name);        //스레드생성(UI 스레드사용시 system 뻗는다)
-		getstationthread.start();    //스레드 시작*/
         GetAddressTask.Companion.active = true
         GetAddressTask(mContext, false, name)
     }
@@ -482,15 +481,8 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
      */
     @SuppressLint("ClickableViewAccessibility")
     var viewpagerTouchListener = OnTouchListener { v, event ->
-        if (!isLockOnHorizontialAxis) isLockOnHorizontialAxis =
-            mGestureDetector!!.onTouchEvent(event)
-        if (event.action == MotionEvent.ACTION_UP) isLockOnHorizontialAxis = false
-        if (isLockOnHorizontialAxis) {
-            binding.swipeLayout.isEnabled = false
-        } else if (!isLockOnHorizontialAxis) {
-            binding.swipeLayout.isEnabled = true
-        }
-        false
+        binding.viewpager.requestDisallowInterceptTouchEvent(true)
+        return@OnTouchListener false
     }// Got last known location. In some rare situations this can be null.
 
 
