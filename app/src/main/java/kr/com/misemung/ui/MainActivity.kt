@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
             Air.updateDustData(binding.viewpager.currentItem + 1, airInfo, stationName)
 
             //adapter 새로고침
-            Objects.requireNonNull(binding.viewpager.adapter)!!.notifyDataSetChanged()
+            binding.viewpager.adapter!!.notifyDataSetChanged()
             getListFlag = false
             if (binding.swipeLayout.isRefreshing) {
                 // 새로고침 완료
@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
             )
         }
         Log.w("MainActivity", "fragment_list ==> " + fragmentList.size)
-        Objects.requireNonNull(binding.viewpager.adapter)!!.notifyDataSetChanged()
+        binding.viewpager.adapter!!.notifyDataSetChanged()
         loadAllList(false)
     }
 
@@ -329,10 +329,9 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
         //adapter 새로고침
         val adapter = binding.viewpager.adapter as DustPagerAdapter?
         val item = binding.viewpager.currentItem
-        Objects.requireNonNull(adapter)!!.deletePage(item)
+        adapter!!.deletePage(item)
         Log.e("MainActivity", "currentItem ==> $item")
         setTabTitleIndicator()
-        loadAllList(false)
         Toast.makeText(mContext, "삭제되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
@@ -419,7 +418,6 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
                 getString(R.string.cancel),
                 getString(R.string.confirm),
                 { view1: View? ->
-                    loadAllList(true)
                     alertDialog!!.dismiss()
                 }) { view2: View? ->
                 // 위치정보 설정 Intent
@@ -435,13 +433,31 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                locatioNManager.requestLocationUpdates(gpsProvider, 60000, 1.0f, locationListener)
-                locatioNManager.requestLocationUpdates(
-                    networkProvider,
-                    60000,
-                    1.0f,
-                    locationListener
-                )
+                val gps = locatioNManager.getLastKnownLocation(gpsProvider)
+                val network = locatioNManager.getLastKnownLocation(networkProvider)
+                when {
+                    gps != null -> {
+                        getStation(gps.longitude.toString(), gps.latitude.toString())
+                    }
+                    network != null -> {
+                        getStation(network.longitude.toString(), network.latitude.toString())
+                    }
+                    else -> {
+                        locatioNManager.requestLocationUpdates(
+                            gpsProvider,
+                            60000,
+                            1.0f,
+                            locationListener
+                        )
+                        locatioNManager.requestLocationUpdates(
+                            networkProvider,
+                            60000,
+                            1.0f,
+                            locationListener
+                        )
+                    }
+                }
+                gpsListFlag = true
             }
         }
     }
@@ -471,6 +487,7 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
         if (xGrid != null && yGrid != null) {
             GetTranscoordTask.Companion.active = true
             GetTranscoordTask(mContext, false, xGrid, yGrid, from, to) //스레드생성(UI 스레드사용시 system 뻗는다)
+            locatioNManager?.removeUpdates(locationListener)
         } else {
             Toast.makeText(mContext, "좌표값 잘못 되었습니다.", Toast.LENGTH_SHORT).show()
         }

@@ -39,4 +39,8 @@ class DustPagerAdapter(fragment: FragmentManager?, fragmentList: ArrayList<Pair<
         return fragmentList[position].first
     }
 
+    override fun getItemPosition(obj: Any): Int {
+        return POSITION_NONE
+    }
+
 }
