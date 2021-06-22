@@ -85,10 +85,10 @@ object CommonPopup {
         context: Context,
         title: String?,
         strAlert: String?,
-        confirmStr: String?,
         cancelStr: String?,
-        confirmListener: View.OnClickListener?,
-        cancelListener: View.OnClickListener?
+        confirmStr: String?,
+        cancelListener: View.OnClickListener?,
+        confirmListener: View.OnClickListener?
     ): Dialog {
         val dialog = Dialog(context, android.R.style.Theme_Light_NoTitleBar)
         val mInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -101,8 +101,8 @@ object CommonPopup {
         val cancelBtn = insertView.findViewById<TextView>(R.id.btn_cancel)
         confirmBtn.text = confirmStr
         cancelBtn.text = cancelStr
-        confirmBtn.setOnClickListener(confirmListener)
         cancelBtn.setOnClickListener(cancelListener)
+        confirmBtn.setOnClickListener(confirmListener)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(insertView)
