@@ -131,17 +131,17 @@ class IntroActivity : AppCompatActivity() {
                         this,
                         getString(R.string.alert_title),
                         getString(R.string.alert_message),
-                        getString(R.string.alert_go_permission),
                         getString(R.string.alert_finish),
+                        getString(R.string.alert_go_permission),
                         { view1: View? ->
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri = Uri.fromParts("package", packageName, null)
-                            intent.data = uri
-                            startActivityForResult(intent, RESULT_PERMISSION)
                             mDialog!!.dismiss()
+                            finish()
                         }) { view2: View? ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", packageName, null)
+                        intent.data = uri
+                        startActivityForResult(intent, RESULT_PERMISSION)
                         mDialog!!.dismiss()
-                        finish()
                     }
                 }
                 return
