@@ -27,7 +27,7 @@
 
 -keepattributes *Annotation*
 
--libraryjars libs
+-libraryjars libs/adlibr.4.0.0.0.jar
 
 -keepattributes EnclosingMethod
 
