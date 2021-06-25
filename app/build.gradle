@@ -14,7 +14,7 @@ android {
         applicationId "kr.com.misemung"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 105
+        versionCode 106
         versionName "1.0.3"
         multiDexEnabled true
         ndk {
