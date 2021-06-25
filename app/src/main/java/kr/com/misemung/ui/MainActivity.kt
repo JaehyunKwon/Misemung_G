@@ -498,7 +498,10 @@ class MainActivity : AppCompatActivity(), OnRefreshListener, CaulyCloseAdListene
      */
     @SuppressLint("ClickableViewAccessibility")
     var viewpagerTouchListener = OnTouchListener { v, event ->
-        binding.viewpager.requestDisallowInterceptTouchEvent(true)
+        binding.swipeLayout.isEnabled = false
+        when (event.action) {
+            MotionEvent.ACTION_UP -> binding.swipeLayout.isEnabled = true
+        }
         return@OnTouchListener false
     }// Got last known location. In some rare situations this can be null.
 
