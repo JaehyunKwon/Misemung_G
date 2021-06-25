@@ -11,8 +11,7 @@ class Permission() {
     @RequiresApi(Build.VERSION_CODES.Q)
     val PERMISSION_MANDATORY = arrayOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION
     )
 
     fun hasMandatoryPermission(ctx: Context): Boolean {
