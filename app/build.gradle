@@ -7,13 +7,12 @@ apply plugin: 'realm-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "kr.com.misemung"
-        minSdkVersion 19
-        targetSdkVersion 30
+        minSdkVersion 24
+        targetSdkVersion 33
         versionCode 106
         versionName "1.0.3"
         multiDexEnabled true
@@ -97,7 +96,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    implementation 'com.github.hackware1993:MagicIndicator:1.7.0'
     //cauly SDK
     implementation 'com.fsn.cauly:cauly-sdk:3.5.18'
 

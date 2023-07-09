@@ -43,7 +43,7 @@ class IntroActivity : AppCompatActivity() {
     }
 
     private fun startIntro() {
-        if (NetworkConnections.isConnected && NetworkConnections.isOnline) {
+        if (NetworkConnections.isConnected) {
             if (Permission().hasMandatoryPermission(this)) {
                 // 2초 후 인트로 액티비티 제거
                 mIntroHandler = Handler()

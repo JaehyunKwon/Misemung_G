@@ -53,11 +53,10 @@ class GetTranscoordTask(
                             if (response.api == getInfo) {
                                 Log.e("#### onHttpResponse : ", "==================")
                                 val ja = JSONObject(response.response).getJSONArray("documents")
-                                val jo: JSONObject
                                 val geoInfo = GeoInfo()
 
                                 //for(int i=0; i<ja.length(); i++) {
-                                jo = ja.getJSONObject(0)
+                                val jo: JSONObject = ja.getJSONObject(0)
                                 Log.e("GetTransCoordTask", "#### jo.getX : " + jo.optString("x"))
                                 Log.e("GetTransCoordTask", "#### jo.getY : " + jo.optString("y"))
                                 Log.e(

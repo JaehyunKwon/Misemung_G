@@ -104,7 +104,7 @@ class GetTranscoordTmTask(
             City[info.umdName] = info
 
             // 가까운 측정소 위치 조회
-            MainActivity.Companion.getNearStation(info.tmX, info.tmY)
+            MainActivity.getNearStation(info.tmX, info.tmY)
         }
     }
 

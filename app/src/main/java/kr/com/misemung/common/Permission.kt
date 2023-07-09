@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
 class Permission() {
-    @RequiresApi(Build.VERSION_CODES.Q)
     val PERMISSION_MANDATORY = arrayOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
