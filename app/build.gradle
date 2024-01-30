@@ -98,7 +98,7 @@ dependencies {
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'com.github.hackware1993:MagicIndicator:1.7.0'
     //cauly SDK
-    implementation 'com.fsn.cauly:cauly-sdk:3.5.18'
+    implementation 'com.fsn.cauly:cauly-sdk:3.5.27'
 
     implementation 'io.realm:android-adapters:2.1.1'
     implementation 'io.realm:realm-transformer:10.0.1'
